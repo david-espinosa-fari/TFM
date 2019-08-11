@@ -81,7 +81,7 @@ final class StationRepositoryMysql implements StationRepository
 	public function findStation(string $uuidStation): Station
 	{
 		$select = 'select uuidStation, uuidUser, latitud, longitud, postalCode,  temp, humidity, presion, location';
-		$from = ' from `station` where `station`.`uuidStation` = ?';
+		$from = ' from `station` where `station`.`uuidStation` = ? and deletedStation = '.'0'.'';
 		$query = $select.$from;
 
 		$stmt = $this->conect->prepare($query);
@@ -162,7 +162,7 @@ final class StationRepositoryMysql implements StationRepository
 	{
 		$stations=[];
 		$select = 'select uuidStation,uuidUser,latitud,longitud,postalCode,temp,humidity,presion,location';
-		$from = ' from station';
+		$from = ' from station where deletedStation = '.'0'.'';
 		$query = $select.$from;
 
 		$stmt = $this->conect->prepare($query);
@@ -225,4 +225,16 @@ final class StationRepositoryMysql implements StationRepository
 		$statment->execute();
 	}
 
+	public function deleteStation($uuidStation):void
+	{
+		$update = "UPDATE `station` SET ";
+		$values = "deletedStation = '1'";
+		$where = " WHERE uuidStation = :uuidStation";
+
+		$query = $update.$values.$where;
+		$statment = $this->conect->prepare($query);
+
+		$statment->bindValue(':uuidStation', $uuidStation);
+		$statment->execute();
+	}
 }

@@ -11,4 +11,6 @@ interface StationRepository
 	public function findAllStation():array;
 
 	public function updateStation(Station $uuidStation):void;
+
+	public function deleteStation($uuidStation):void;
 }
