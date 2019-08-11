@@ -1,0 +1,25 @@
+/.env.local
+/.env.local.php
+/.env.*.local
+/.web-server-pid
+log
+*.log
+*.tlog
+
+var/elasticsearch/*
+var/redis/*
+
+.idea/TFM.iml
+.idea/deployment.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/php.xml
+.idea/vagrant.xml
+.idea/vcs.xml
+.idea/workspace.xml
+etc/php/
+ops/eliminar mysql57.txt
+
+
+/var/mysql/performance_schema/
+

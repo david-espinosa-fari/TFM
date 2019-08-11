@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    #build: ./ops/mysql57
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: 'meteosalle'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./var/mysql:/var/lib/mysql
+      - ./etc/mysql/meteosalle.sql:/docker-entrypoint-initdb.d/meteosalle.sql
+    #command: /bin/sh -c 'mysql -u root -ppassword < /docker-entrypoint-initdb.d/meteosalle.sql'
+      #-./var/allmysql:/
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./www/html:/code
+      - ./etc/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./var/nginx/log:/var/log/nginx
+    links:
+      - php
+
+  php:
+    build: ./ops/php-fpm
+    container_name: php
+    volumes:
+      - ./www/html:/code
+      - ./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+    links:
+      - mysql
+      - redis
+      - rabbitmq
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./var/redis:/data
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: rabbit
+    restart: unless-stopped
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
