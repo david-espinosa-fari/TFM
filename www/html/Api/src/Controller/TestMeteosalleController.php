@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class TestMeteosalleController extends AbstractController
+final class TestMeteosalleController extends AbstractController
 {
     /**
      * @Route("/apiv1/status", name="test_meteosalle")

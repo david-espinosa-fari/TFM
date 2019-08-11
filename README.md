@@ -32,11 +32,11 @@ Endpoints a crear
 [11:18, 10/8/2019] David: resumiendo endpoints
 [11:18, 10/8/2019] David: ===============estaciones===============
 Listo [11:20, 10/8/2019] David: Post /apiv1/stations/ valores (uuid, codigo postal, latitud, longitud, temp, humedad, presion, timestamp), crea una estacion
+Listo [11:26, 10/8/2019] David: GET /apiv1/stations/uuidStation devuelve una estacion
 
-[11:26, 10/8/2019] David: GET /apiv1/stations/uuidStation devuelve una estacion
 
 [11:21, 10/8/2019] David: put /apiv1/stations/uuidStations? campo=valor a actualizar actualiza un dato para una estacion
-[11:22, 10/8/2019] David: en este se me olvido usuario= uuidUser
+
 [11:22, 10/8/2019] David: GET / apiv1/stations/ devuelve todas las estaciones con el formato que me pediste
 [11:23, 10/8/2019] David: delete /apiv1/stations/uuidStations elimina la estacion
 [11:24, 10/8/2019] David: ========================================

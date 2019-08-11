@@ -129,7 +129,7 @@ class StationRepositoryMysql implements StationRepository
 	private function findPredictionsStation($postalCode)
 	{
 		/*esto iria a la api de marc a buscar las predicciones para
-		un codigo postal
+		un codigo postal para una estacion
 		*/
 
 		$json = json_encode([
@@ -145,17 +145,57 @@ class StationRepositoryMysql implements StationRepository
 				"temp"=> 10,
 				"humidity"=> 30,
 				"presion"=>14.6,
-				"timestamp"=> "2019 - 08 - 11 12:56:55"
+				"timestamp"=> "2019 - 08 - 12 12:56:55"
 			],
 			[
 				'postalCode'=>"08720",
 				"temp"=> 24,
 				"humidity"=> 90,
 				"presion"=>14.7,
-				"timestamp"=> "2019 - 08 - 11 13:56:55"
+				"timestamp"=> "2019 - 08 - 13 13:56:55"
 			]
 			]);
 		return json_decode($json,true);
+	}
+
+	public function findAllStation():array
+	{
+		$stations=[];
+		$select = 'select uuidStation,uuidUser,latitud,longitud,postalCode,temp,humidity,presion,location';
+		$from = ' from station';
+		$query = $select.$from;
+
+		$stmt = $this->conect->prepare($query);
+		$stmt->bindParam(1, $uuidStation);
+		$stmt->execute();
+		$response = $stmt->fetchAll(PDO::FETCH_ASSOC);// lo tomo-all para que sea mas rapida la consulta
+
+		$count = count($response);
+		for ($i=0;$i<$count;$i++)
+		{
+			if (!empty($response[$i]) && !empty($response[$i]['uuidStation']))
+			{
+				$station = new Station
+				(
+					$response[$i]['uuidStation'],
+					$response[$i]['uuidUser'],
+					$response[$i]['latitud'],
+					$response[$i]['longitud'],
+					$response[$i]['postalCode'],
+					$response[$i]['temp'],
+					$response[$i]['humidity'],
+					$response[$i]['presion'],
+					$response[$i]['location']
+				);
+				$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
+				$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
+
+				$stations[] = $station;
+			}
+
+		}
+
+		return $stations;
 	}
 
 }
