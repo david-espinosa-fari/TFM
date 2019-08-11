@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PutStationController extends AbstractController
+final class PutStationController extends AbstractController
 {//se puede actualizar all, menos el uuidStation
 
 	/**

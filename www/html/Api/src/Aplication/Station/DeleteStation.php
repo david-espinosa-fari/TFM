@@ -5,7 +5,7 @@ namespace App\Aplication\Station;
 use App\Domain\CacheDataRepository;
 use App\Domain\StationRepository;
 
-class DeleteStation
+final class DeleteStation
 {
 
 	/**

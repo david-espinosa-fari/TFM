@@ -7,7 +7,7 @@ use App\Domain\Station;
 use App\Domain\StationRepository;
 use Symfony\Component\BrowserKit\Request;
 
-class UpdateStation
+final class UpdateStation
 {
 
 	/**
