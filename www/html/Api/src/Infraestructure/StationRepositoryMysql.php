@@ -9,7 +9,7 @@ use Exception;
 use PDO;
 use PDOException;
 
-class StationRepositoryMysql implements StationRepository
+final class StationRepositoryMysql implements StationRepository
 {
 	private $conect;
 
@@ -196,6 +196,33 @@ class StationRepositoryMysql implements StationRepository
 		}
 
 		return $stations;
+	}
+
+	public function updateStation(Station $station):void
+	{
+		$uuidStation = (string)$station;
+		$uuidUser = $station->getUuidUser();
+		$latitud = $station->getLatitud();
+		$longitud = $station->getLongitud();
+		$postalCode = $station->getPostalCode();
+		$temp = $station->getTemp();
+		$humidity = $station->getHumidity();
+
+		$update = "UPDATE `station` SET ";
+		$values = "uuidUser = :uuidUser, latitud =:latitud, longitud=:longitud, postalCode=:postalCode, temp=:temp, humidity=:humidity";
+		$where = " WHERE uuidStation = :uuidStation";
+
+		$query = $update.$values.$where;
+		$statment = $this->conect->prepare($query);
+
+		$statment->bindValue(':uuidStation', $uuidStation);
+		$statment->bindValue(':uuidUser', $uuidUser);
+		$statment->bindValue(':latitud', $latitud);
+		$statment->bindValue(':longitud', $longitud);
+		$statment->bindValue(':postalCode', $postalCode);
+		$statment->bindValue(':temp', $temp);
+		$statment->bindValue(':humidity', $humidity);
+		$statment->execute();
 	}
 
 }
