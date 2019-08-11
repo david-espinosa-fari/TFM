@@ -104,6 +104,8 @@ class StationRepositoryMysql implements StationRepository
 			$response['presion'],
 			$response['location']
 		);
+			$station->setHistoric($this->findHistorycStation($uuidStation));
+			$station->setPredictions($this->findPredictionsStation($response['postalCode']));
 
 			return $station;
 		}
@@ -111,5 +113,42 @@ class StationRepositoryMysql implements StationRepository
 
 	}
 
+	private function findHistorycStation(string $uuidStation):array
+	{
+		$select = 'select temp, humidity, presion, timestamp';
+		$from = ' from `StationHistory` where uuidStation = ?';
+		$query = $select.$from;
+
+		$stmt = $this->conect->prepare($query);
+		$stmt->bindParam(1, $uuidStation);
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+	}
+
+	private function findPredictionsStation($postalCode)
+	{
+		/*esto iria a la api de marc a buscar las predicciones para
+		un codigo postal
+		*/
+
+		$json = json_encode([
+			[
+			'postalCode'=>"08720",
+			"temp"=> 33,
+			"humidity"=> 90,
+			"presion"=>14.7,
+			"timestamp"=> "2019 - 08 - 11 11:56:55"
+			],
+			[
+				'postalCode'=>"08720",
+				"temp"=> 33,
+				"humidity"=> 90,
+				"presion"=>14.7,
+				"timestamp"=> "2019 - 08 - 11 11:56:55"
+			]
+			]);
+		return json_decode($json,true);
+	}
 
 }

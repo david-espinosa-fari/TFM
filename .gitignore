@@ -23,3 +23,6 @@ ops/eliminar mysql57.txt
 
 /var/mysql/performance_schema/
 
+/var/mysql/performance_schema/
+/var/mysql/mysql/
+/var/mysql/sys/

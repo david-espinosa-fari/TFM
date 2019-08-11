@@ -30,7 +30,7 @@ class PostStationController extends AbstractController
 	 * */
 
 	/**
-	 * @Route("/apiv1/stations", name="post_station", methods={"POST"})
+	 * @Route("/apiv1/stations/", name="post_station", methods={"POST"})
 	 * @param Request $request
 	 * @return JsonResponse
 	 */

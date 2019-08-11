@@ -26,6 +26,34 @@ final class FindStation
 
 	public function __invoke($uuidStation):Station
 	{
-		$this->repository->findStation($uuidStation);
+		$query = md5($uuidStation);
+
+		$response = $this->cacheDataRepository->find($query);
+		if (!empty($response))
+		{
+			$station = new Station
+			(
+				$response['uuidStation'],
+				$response['uuidUser'],
+				$response['latitud'],
+				$response['longitud'],
+				$response['postalCode'],
+				$response['temp'],
+				$response['humidity'],
+				$response['presion'],
+				$response['location']
+			);
+			$station->setHistoric($response['historic']);
+			$station->setPredictions($response['predictions']);
+
+		}else{
+
+		$station = $this->repository->findStation($uuidStation);
+
+		$this->cacheDataRepository->insert($query, $station->getStationLikeArray(), 10);
+		}
+		var_dump($station);
+		return $station;
+
 	}
 }

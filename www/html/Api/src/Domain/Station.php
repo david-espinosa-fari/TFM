@@ -16,6 +16,8 @@ class Station
 	private $humidity;
 	private $presion;
 	private $location;
+	private $historic;
+	private $predictions;
 
 	public function __construct(
 			$uuidStation,
@@ -147,6 +149,22 @@ class Station
 	public function getLocation()
 	{
 		return $this->location;
+	}
+
+	/**
+	 * @param mixed $historic
+	 */
+	public function setHistoric($historic): void
+	{
+		$this->historic = $historic;
+	}
+
+	/**
+	 * @param mixed $prediccions
+	 */
+	public function setPredictions($prediccions): void
+	{
+		$this->predictions = $prediccions;
 	}
 
 }

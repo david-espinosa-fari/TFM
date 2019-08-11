@@ -33,20 +33,17 @@ final class CacheDataRepositoryRedis implements CacheDataRepository
 		//$this->redis->flushall(); // elimina toda la cache
 		if ($this->redis->exists($hashMd5FromQuery))
 		{
-			echo "Obtenido de cache Redis <br>";
-			var_dump(json_decode($this->redis->get($hashMd5FromQuery), true));
+//			echo "Obtenido de cache Redis <br>";
 			return json_decode($this->redis->get($hashMd5FromQuery), true);
 		}
 
 		return false;
 	}
 
-	public function insert($keyHashMd5, $dataToCache, $timeExpire=60): void
+	public function insert($keyHashMd5, $dataToCache, $timeExpire=10): void
 	{
 		$jsonEncode = json_encode($dataToCache);
-		var_dump($jsonEncode);
 		$this->redis->set($keyHashMd5, $jsonEncode);//if key exist update values
 		$this->redis->expire($keyHashMd5, $timeExpire);
-		echo("redis entered en cache");
 	}
 }
