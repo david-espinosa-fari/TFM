@@ -56,7 +56,7 @@ final class PostStationController extends AbstractController
 
 			return new JsonResponse(
 				['Message' => 'Station ' . $station . ' created'],
-				202,
+				201,
 				array(
 					'Content-Type' => 'application/json',
 				));
