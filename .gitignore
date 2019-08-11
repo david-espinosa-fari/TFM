@@ -43,3 +43,18 @@ ops/eliminar mysql57.txt
 /var/mysql/server-key.pem
 /var/mysql/ibtmp1
 
+/var/mysql/sys/
+/var/mysql/auto.cnf
+/var/mysql/ca.pem
+/var/mysql/ca-key.pem
+/var/mysql/client-cert.pem
+/var/mysql/client-key.pem
+/var/mysql/ib_buffer_pool
+/var/mysql/ib_logfile0
+/var/mysql/ib_logfile1
+/var/mysql/ibdata1
+/var/mysql/ibtmp1
+/var/mysql/private_key.pem
+/var/mysql/public_key.pem
+/var/mysql/server-cert.pem
+/var/mysql/server-key.pem

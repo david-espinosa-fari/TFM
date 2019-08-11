@@ -4,6 +4,7 @@ namespace App\Infraestructure;
 
 use App\Domain\Station;
 use App\Domain\StationErrorException;
+use App\Domain\StationHistory;
 use App\Domain\StationRepository;
 use Exception;
 use PDO;
@@ -236,5 +237,30 @@ final class StationRepositoryMysql implements StationRepository
 
 		$statment->bindValue(':uuidStation', $uuidStation);
 		$statment->execute();
+	}
+
+	public function addStationHistory(StationHistory $stationHistory):void
+	{
+		$uuidStation = (string)$stationHistory;
+		$temp = $stationHistory->getTemp();
+		$humidity = $stationHistory->getHumidity();
+		$presion = $stationHistory->getPresion();
+		$timestamp = $stationHistory->getTimestamp();
+
+		$fields = 'INSERT INTO `StationHistory`(uuidStation,temp,humidity,presion,timestamp)';
+		$values = ' VALUES (?,?,?,?,?)';
+		$query = $fields.$values;
+
+		$statment = $this->conect->prepare($query);
+
+		$statment->bindParam(1, $uuidStation);
+		$statment->bindParam(2, $temp);
+		$statment->bindParam(3, $humidity);
+		$statment->bindParam(4, $presion);
+		$statment->bindParam(5, $timestamp);
+		if (!$statment->execute())
+		{
+			throw new StationErrorException('Could not insert value, check your request; station most exist', 400);
+		}
 	}
 }

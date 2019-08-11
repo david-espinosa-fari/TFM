@@ -13,4 +13,6 @@ interface StationRepository
 	public function updateStation(Station $uuidStation):void;
 
 	public function deleteStation($uuidStation):void;
+
+	public function addStationHistory(StationHistory $stationHistory):void;
 }

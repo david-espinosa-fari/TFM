@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Controller;
+
+use App\Aplication\Station\AddStationHistory;
+use App\Aplication\Station\CreateStation;
+use App\Domain\Error\RedisConectionErrorException;
+use App\Domain\Station;
+use App\Domain\StationErrorException;
+use App\Domain\StationHistory;
+use App\Infraestructure\CacheDataRepositoryRedis;
+use App\Infraestructure\StationRepositoryMysql;
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+
+class PostStationHistoryController extends AbstractController
+{
+
+	/**
+	 * @Route("/apiv1/stations/{uuidStation}/history", name="post_station_history", methods={"POST"})
+	 * @param Request $request
+	 * @return JsonResponse
+	 * @throws RedisConectionErrorException
+	 */
+
+	public function index($uuidStation,Request $request): JsonResponse
+	{
+		try
+		{
+
+			$stationHistory = StationHistory::buildStationHistory($uuidStation, $request);
+
+			$repository = new StationRepositoryMysql();
+			$cacheDataRepository = new CacheDataRepositoryRedis();
+
+			/*try
+			{*/
+				$addStationHistory = new AddStationHistory($repository,$cacheDataRepository);
+				$addStationHistory($stationHistory);
+
+			/*}
+			catch (Exception $exception)
+			{
+				throw new StationErrorException($exception->getMessage(), $exception->getCode());
+			}*/
+
+			return new JsonResponse(
+				['Message' => 'history for the station ' . $stationHistory . ' updated'],
+				201,
+				array(
+					'Content-Type' => 'application/json',
+				));
+
+		}
+		catch (StationErrorException $e)
+		{
+			$jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
+				array(
+					'Content-Type' => 'application/json',
+				));
+
+			return $jsonResponse;
+		}
+
+	}
+
+}
