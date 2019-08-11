@@ -4,7 +4,7 @@ namespace App\Domain;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class Station
+final class Station
 {
 
 	private $uuidStation;

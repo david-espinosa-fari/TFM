@@ -52,7 +52,6 @@ final class FindStation
 
 		$this->cacheDataRepository->insert($query, $station->getStationLikeArray(), 10);
 		}
-		var_dump($station);
 		return $station;
 
 	}

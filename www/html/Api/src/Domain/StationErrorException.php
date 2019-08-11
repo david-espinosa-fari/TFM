@@ -4,7 +4,7 @@ namespace App\Domain;
 
 use \Exception;
 use \Throwable;
-class StationErrorException extends Exception
+final class StationErrorException extends Exception
 {
 	private $detailsError;
 

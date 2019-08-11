@@ -11,9 +11,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class GetOneStationController extends AbstractController
+final class GetOneStationController extends AbstractController
 {
 
+	//Ejemplo de peticion
+	/*
+	 * GET http://meteosalle.local/apiv1/stations/{uuid de una estacion}
+	 * */
 	/**
 	 * @Route("/apiv1/stations/{uuidStation}", name="get_one_station", methods={"GET"})
 	 * @param $uuidStation
@@ -32,13 +36,13 @@ class GetOneStationController extends AbstractController
 
 			$station = $findStation($uuidStation);
 
-			return new JsonResponse(
-				$station->getStationLikeArray(),
-				200,
+			$jsonResponse = new JsonResponse($station->getStationLikeArray(),200,
 				array(
 					'Content-Type' => 'application/json',
 				));
 
+			$jsonResponse->setEncodingOptions(400);
+			return $jsonResponse;
 		}
 		catch (StationErrorException $e)
 		{
@@ -47,6 +51,7 @@ class GetOneStationController extends AbstractController
 					'Content-Type' => 'application/json',
 				));
 
+			$jsonResponse->setEncodingOptions(400);
 			return $jsonResponse;
 		}
 	}

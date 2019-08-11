@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PostStationController extends AbstractController
+final class PostStationController extends AbstractController
 {
 
 	//Ejemplo de peticion
