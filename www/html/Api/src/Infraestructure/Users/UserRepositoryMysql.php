@@ -109,5 +109,19 @@ final class UserRepositoryMysql implements UserRepository
 
 	public function updateUser(User $uuidUser):void{}
 
-	public function deleteUser($uuidUser):void{}
+	public function deleteUser($uuidUser):void
+    {
+        $update = "UPDATE `user` SET ";
+        $values = "deletedUser = '1'";
+        $where = " WHERE uuidUser = :uuidUser";
+
+        $query = $update.$values.$where;
+        $statment = $this->conect->prepare($query);
+
+        $statment->bindValue(':uuidUser', $uuidUser);
+        if (!$statment->execute())
+        {
+            throw new UserErrorException('Could not delete user, check your request '.$uuidUser, 400);
+        }
+    }
 }
