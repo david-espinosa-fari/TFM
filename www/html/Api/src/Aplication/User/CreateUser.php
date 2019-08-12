@@ -9,7 +9,7 @@ use App\Domain\Users\User;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\Users\UserRepositoryMysql;
 
-class CreateUser
+final class CreateUser
 {
     /**
      * @var UserRepositoryMysql
