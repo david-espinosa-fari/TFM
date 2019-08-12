@@ -36,9 +36,7 @@ Listo [11:26, 10/8/2019] David: GET /apiv1/stations/uuidStation devuelve una est
 listo [11:21, 10/8/2019] David: put /apiv1/stations/uuidStations? campo=valor a actualizar actualiza un dato para una estacion
 listo [11:22, 10/8/2019] David: GET / apiv1/stations/ devuelve todas las estaciones con el formato que me pediste
 listo [11:23, 10/8/2019] David: delete /apiv1/stations/uuidStations elimina la estacion
-
-Post /apiv1/stations/uuidStations/history/
-
+listo [11:23, 10/8/2019] David: Post /apiv1/stations/uuidStations/history/
 [11:24, 10/8/2019] David: ========================================
 
 [11:32, 10/8/2019] David: ==================Para Usuarios==============
