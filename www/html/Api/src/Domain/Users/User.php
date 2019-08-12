@@ -6,7 +6,7 @@ namespace App\Domain\Users;
 use App\Domain\Users\Error\UserErrorException;
 use Symfony\Component\HttpFoundation\Request;
 
-class User
+final class User
 {
 
 	private $uuidUser;

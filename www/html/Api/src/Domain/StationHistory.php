@@ -3,9 +3,8 @@
 namespace App\Domain;
 
 use Symfony\Component\HttpFoundation\Request;
-use DateTime;
 
-class StationHistory
+final class StationHistory
 {
 
 	private $uuidStation;

@@ -9,7 +9,7 @@ use Exception;
 use PDO;
 use PDOException;
 
-class UserRepositoryMysql implements UserRepository
+final class UserRepositoryMysql implements UserRepository
 {
 	private $conect;
 

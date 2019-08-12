@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class PostStationHistoryController extends AbstractController
+final class PostStationHistoryController extends AbstractController
 {
 
 	/**
