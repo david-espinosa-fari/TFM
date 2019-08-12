@@ -107,7 +107,35 @@ final class UserRepositoryMysql implements UserRepository
         throw new UserErrorException('User ' . $uuidUser . ' not Found', 404);
 	}
 
-	public function updateUser(User $uuidUser):void{}
+	public function updateUser(User $user):void
+    {
+        $uuidUser = (string)$user;
+        $name = $user->getName();
+        $lastname = $user->getLastname();
+        $password = $user->getPassword();
+        $userName = $user->getUserName();
+        $age = $user->getAge();
+        $gender = $user->getGender();
+
+        $update = "UPDATE `user` SET";
+        $values = " name = :name, lastname = :lastname, password = :password, userName = :userName, age = :age, gender = :gender";
+        $where = " WHERE uuidUser = :uuidUser";
+
+        $query = $update.$values.$where;
+        $statment = $this->conect->prepare($query);
+
+        $statment->bindValue(':name', $name);
+        $statment->bindValue(':lastname', $lastname);
+        $statment->bindValue(':password', $password);
+        $statment->bindValue(':userName', $userName);
+        $statment->bindValue(':age', $age);
+        $statment->bindValue('gender', $gender);
+        $statment->bindValue(':uuidUser', $uuidUser);
+        if (!$statment->execute())
+        {
+            throw new UserErrorException('User could not being uodated', 400);
+        }
+    }
 
 	public function deleteUser($uuidUser):void
     {
@@ -121,7 +149,7 @@ final class UserRepositoryMysql implements UserRepository
         $statment->bindValue(':uuidUser', $uuidUser);
         if (!$statment->execute())
         {
-            throw new UserErrorException('Could not delete user, check your request '.$uuidUser, 400);
+            throw new UserErrorException('Could not delete user, check your request ', 400);
         }
     }
 }

@@ -9,7 +9,7 @@ interface UserRepository
 
 	public function findUser(string $uuidUser): User;
 
-	public function updateUser(User $uuidUser):void;
+	public function updateUser(User $user):void;
 
 	public function deleteUser($uuidUser):void;
 }

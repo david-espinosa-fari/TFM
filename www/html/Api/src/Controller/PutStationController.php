@@ -38,31 +38,31 @@ final class PutStationController extends AbstractController
 			{
 				$station->setUuidUser($uuuidUser);
 			}
-			elseif ($lat = $request->get('latitud'))
+			if ($lat = $request->get('latitud'))
 			{
 				$station->setLatitud($lat);
 			}
-			elseif ($long = $request->get('longitud'))
+			if ($long = $request->get('longitud'))
 			{
 				$station->setLongitud($long);
 			}
-			elseif ($postalCode = $request->get('postalCode'))
+			if ($postalCode = $request->get('postalCode'))
 			{
 				$station->setPostalCode($postalCode);
 			}
-			elseif ($temp = $request->get('temp'))
+			if ($temp = $request->get('temp'))
 			{
 				$station->setTemp($temp);
 			}
-			elseif ($humidity = $request->get('humidity'))
+			if ($humidity = $request->get('humidity'))
 			{
 				$station->setUuidUser($uuuidUser);
 			}
-			elseif ($presion = $request->get('presion'))
+			if ($presion = $request->get('presion'))
 			{
 				$station->setUuidUser($uuuidUser);
 			}
-			elseif ($location = $request->get('location'))
+			if ($location = $request->get('location'))
 			{
 				$station->setUuidUser($uuuidUser);
 			}
