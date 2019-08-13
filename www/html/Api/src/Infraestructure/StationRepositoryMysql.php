@@ -74,7 +74,7 @@ final class StationRepositoryMysql implements StationRepository
 			$statment->bindParam(9, $location);
 			if (!$statment->execute())
 			{
-				throw new StationErrorException('Could not insert value, check your request; user most exist', 400);
+				throw new StationErrorException('Could not insert value, check your request; user most exist and CHANGE your uuidStation', 400);
 			}
 		}
 	}

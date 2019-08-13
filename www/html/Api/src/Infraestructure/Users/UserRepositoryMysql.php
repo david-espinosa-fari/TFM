@@ -70,7 +70,7 @@ final class UserRepositoryMysql implements UserRepository
             $statment->bindParam(7, $gender);
             if (!$statment->execute())
             {
-                throw new UserErrorException('Could not insert value, check your request', 400);
+                throw new UserErrorException('Could not insert value, CHANGE your uuidUser', 400);
             }
 
         }
@@ -133,7 +133,7 @@ final class UserRepositoryMysql implements UserRepository
         $statment->bindValue(':uuidUser', $uuidUser);
         if (!$statment->execute())
         {
-            throw new UserErrorException('User could not being uodated', 400);
+            throw new UserErrorException('User could not being updated', 400);
         }
     }
 
