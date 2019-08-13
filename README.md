@@ -42,9 +42,10 @@ listo [11:23, 10/8/2019] David: Post /apiv1/stations/uuidStations/history/
 [11:32, 10/8/2019] David: ==================Para Usuarios==============
 listo [11:33, 10/8/2019] David: Post /apiv1/users/ valores (los valores que tu digas), crea un usuario
 listo [11:35, 10/8/2019] David: GET / apiv1/users/uuidUser devuelve un usuario
+listo [11:35, 10/8/2019] David: delete /apiv1/users/uuidUser elimina un usurio
+listo [11:33, 10/8/2019] David: put /apiv1/users/uuidUsers? campo=valor a actualizar actualiza un dato para un usuario
 
-[11:33, 10/8/2019] David: put /apiv1/users/uuidUsers? campo=valor a actualizar actualiza un dato para un usuario
-[11:35, 10/8/2019] David: delete /apiv1/users/uuidUser elimina un usurio
+vendria faltando las mediciones, promedio de temperatura
 [11:35, 10/8/2019] David: =================================
 
 

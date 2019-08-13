@@ -33,7 +33,7 @@ final class CacheDataRepositoryRedis implements CacheDataRepository
 		//$this->redis->flushall(); // elimina toda la cache
 		if ($this->redis->exists($hashMd5FromQuery))
 		{
-			echo "Obtenido de cache Redis <br>";
+			echo "Obtenido de cache Redis /n";
 			return json_decode($this->redis->get($hashMd5FromQuery), true);
 		}
 
@@ -45,6 +45,6 @@ final class CacheDataRepositoryRedis implements CacheDataRepository
 		$jsonEncode = json_encode($dataToCache);
 		$this->redis->set($keyHashMd5, $jsonEncode);//if key exist update values
 		$this->redis->expire($keyHashMd5, $timeExpire);
-		echo "insertado en cache";
+		echo "Updated cache";
 	}
 }
