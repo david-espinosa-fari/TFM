@@ -2,6 +2,11 @@
 
 namespace App\Infraestructure;
 
+use App\Aplication\Station\FindRemotePredictionStations;
+use App\Aplication\UpdateCache;
+use App\Domain\Error\ApiConectionError;
+use App\Domain\Error\LocationCodeError;
+use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Station;
 use App\Domain\StationErrorException;
 use App\Domain\StationHistory;
@@ -14,17 +19,19 @@ final class StationRepositoryMysql implements StationRepository
 {
 	private $conect;
 
-	/**
-	 * StationRepository constructor.
-	 * @throws StationErrorException
-	 */
+    /**
+     * StationRepository constructor.
+     * @param $host
+     */
 
-	public function __construct()
+	public function __construct(string $host)
 	{
+
 		try
 		{
 			$this->conect = new PDO(
-				"mysql:host={$_SERVER['HOST_MYSQL']};dbname={$_SERVER['DB_MYSQL']}",
+				//"mysql:host=localhost;dbname={$_SERVER['DB_MYSQL']}",
+				"mysql:host=$host;dbname={$_SERVER['DB_MYSQL']}",
 				$_SERVER['USER_MYSQL'],
 				$_SERVER['PASS_MYSQL']
 			);
@@ -32,9 +39,9 @@ final class StationRepositoryMysql implements StationRepository
 		}
 		catch (PDOException $exception)
 		{
-			$stationErrorResponse = new StationErrorException('Internal Server error', 500);
-			$stationErrorResponse->setMoreInfo($exception);
-			throw $stationErrorResponse;
+			throw new StationErrorException('Internal Server error', 500);
+			//$stationErrorResponse->setMoreInfo($exception);
+			//throw $stationErrorResponse;
 		}
 	}
 
@@ -106,7 +113,15 @@ final class StationRepositoryMysql implements StationRepository
 			$response['location']
 		);
 			$station->setHistoric($this->findHistorycStation($uuidStation));
-			$station->setPredictions($this->findPredictionsStation($response['postalCode']));
+			try{
+
+                $station->setPredictions(
+                    $this->findPredictionsStation($response['postalCode']
+                    )
+                );
+            }catch (LocationCodeError $exception){
+            }catch(ApiConectionError $exception){
+            }
 
 			return $station;
 		}
@@ -127,36 +142,71 @@ final class StationRepositoryMysql implements StationRepository
 
 	}
 
-	private function findPredictionsStation($postalCode)
-	{
+    public function findLocationCode($postalCode):string
+    {
+        $select = 'select locationCode';
+        $from = ' from `citiesZip` where `postalCode` = ? ';
+        $query = $select.$from;
+
+        $stmt = $this->conect->prepare($query);
+        $stmt->bindParam(1, $postalCode);
+
+        if ($stmt->execute())
+        {
+            $response = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!empty($response))
+            {
+                return $response['locationCode'];
+            }
+        }
+        throw new LocationCodeError();
+	}
+
+	public function findPredictionsStation($postalCode): array
+    {
+        try {
+            $locationCode = $this->findLocationCode($postalCode);
+            $apiRepository = new StationRemoteRepositoryApi();
+            $findPredictions = new FindRemotePredictionStations($apiRepository);
+
+            return $findPredictions->findPredictionsBy($locationCode);
+
+        } catch (LocationCodeError $e) {
+            //echo 'findPredictionsStation '.$e->getMessage();
+        }/*catch (ApiConectionError $e){
+            echo 'Error Conectin Api ',$e->getMessage();
+        }*/
+
+
+
 		/*esto iria a la api de marc a buscar las predicciones para
 		un codigo postal para una estacion
-		*/
+
 
 		$json = json_encode([
 			[
-			'postalCode'=>"08720",
+            "zipCode"=>$postalCode,
 			"temp"=> 33,
 			"humidity"=> 90,
 			"presion"=>14.7,
 			"timestamp"=> "2019 - 08 - 11 11:56:55"
 			],
 			[
-				'postalCode'=>"08720",
+
 				"temp"=> 10,
 				"humidity"=> 30,
 				"presion"=>14.6,
 				"timestamp"=> "2019 - 08 - 12 12:56:55"
 			],
 			[
-				'postalCode'=>"08720",
+
 				"temp"=> 24,
 				"humidity"=> 90,
 				"presion"=>14.7,
 				"timestamp"=> "2019 - 08 - 13 13:56:55"
 			]
 			]);
-		return json_decode($json,true);
+		return json_decode($json,true);*/
 	}
 
 	public function findAllStation():array
@@ -189,12 +239,16 @@ final class StationRepositoryMysql implements StationRepository
 					$response[$i]['location']
 				);
 				$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
-				$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
+				//$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
 
 				$stations[] = $station;
 			}
 
 		}
+        if (empty($stations))
+        {
+            throw new StationErrorException('Stations not Found ',404);
+        }
 
 		return $stations;
 	}

@@ -15,4 +15,7 @@ interface StationRepository
 	public function deleteStation($uuidStation):void;
 
 	public function addStationHistory(StationHistory $stationHistory):void;
+
+    public function findLocationCode($postalCode):string;
+
 }
