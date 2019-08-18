@@ -14,17 +14,18 @@ final class CacheDataRepositoryRedis implements CacheDataRepository
 
 	private $redis;
 
-	public function __construct()
+	public function __construct(string $host)
 	{
 		try
 		{
-			$this->redis = new Client(['schema' => 'tcp', 'host' => $_SERVER['HOST_REDIS'], 'port' => 6379]);
+			$this->redis = new Client(['schema' => 'tcp', 'host' => $host, 'port' => 6379]);
+			//$this->redis = new Client(['schema' => 'tcp', 'host' => 'localhost', 'port' => 6379]);
 
 			$this->redis->connect();
 
 		} catch (ConnectionException $exception)
 		{
-			throw new RedisConectionErrorException('Error conecting to Redis', 500, $exception);
+			throw new RedisConectionErrorException('Error conecting to Redis '.$exception->getMessage(), 500, $exception);
 		}
 	}
 
@@ -40,11 +41,15 @@ final class CacheDataRepositoryRedis implements CacheDataRepository
 		return false;
 	}
 
-	public function insert($keyHashMd5, $dataToCache, $timeExpire=10): void
+	public function insert($keyHashMd5, $dataToCache, $timeExpire=null): void
 	{
-		$jsonEncode = json_encode($dataToCache);
+        $timeToLive = $_SERVER['TIME_TO_LIVE_CACHE'];
+
+		$jsonEncode = json_encode($dataToCache,false);
+
 		$this->redis->set($keyHashMd5, $jsonEncode);//if key exist update values
-		$this->redis->expire($keyHashMd5, $timeExpire);
+		$this->redis->expire($keyHashMd5, $timeToLive);
 		//echo "Updated cache";
+
 	}
 }
