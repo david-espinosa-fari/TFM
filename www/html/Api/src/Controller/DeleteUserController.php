@@ -25,7 +25,7 @@ final class DeleteUserController extends AbstractController
         try
         {
             $userRepository = new UserRepositoryMysql();
-            $cacheData = new CacheDataRepositoryRedis();
+            $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
             $delete = new DeleteUser($userRepository,$cacheData);
             $delete($uuidUser);
@@ -35,6 +35,7 @@ final class DeleteUserController extends AbstractController
                 200,
                 array(
                     'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
                 ));
 
         }

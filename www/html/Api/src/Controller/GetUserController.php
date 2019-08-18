@@ -25,7 +25,7 @@ final class GetUserController extends AbstractController
         try{
 
             $stationRepository = new UserRepositoryMysql();
-            $cacheData = new CacheDataRepositoryRedis();
+            $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
             $findUser = new FindUser($stationRepository, $cacheData);
             $user = $findUser($uuidUser);
@@ -33,6 +33,7 @@ final class GetUserController extends AbstractController
             $jsonResponse = new JsonResponse($user->getUserLikeArray(),200,
                 array(
                     'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

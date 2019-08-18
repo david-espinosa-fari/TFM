@@ -28,7 +28,7 @@ final class PostUserController extends AbstractController
 		try
 		{
             $repository = new UserRepositoryMysql();
-            $cacheData = new CacheDataRepositoryRedis();
+            $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
             try{
                 $createUser = new CreateUser($repository,$cacheData);
@@ -46,6 +46,7 @@ final class PostUserController extends AbstractController
 				201,
 				array(
 					'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
 				));
 		}
 		catch (UserErrorException $e)

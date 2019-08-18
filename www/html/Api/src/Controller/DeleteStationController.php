@@ -25,8 +25,8 @@ final class DeleteStationController extends AbstractController
 
 		try
 		{
-			$stationRepository = new StationRepositoryMysql();
-			$cacheData = new CacheDataRepositoryRedis();
+			$stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
+			$cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
 			$delete = new DeleteStation($stationRepository,$cacheData);
 			$delete($uuidStation);
@@ -36,6 +36,7 @@ final class DeleteStationController extends AbstractController
 				200,
 				array(
 					'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
 				));
 
 		}

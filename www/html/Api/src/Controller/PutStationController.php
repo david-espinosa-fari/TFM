@@ -28,8 +28,8 @@ final class PutStationController extends AbstractController
 
 		try
 		{
-			$stationRepository = new StationRepositoryMysql();
-			$cacheData = new CacheDataRepositoryRedis();
+			$stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
+			$cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
 			$findStation = new FindStation($stationRepository,$cacheData);
 			$station = $findStation($uuidStation);
@@ -75,6 +75,7 @@ final class PutStationController extends AbstractController
 				200,
 				array(
 					'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
 				));
 
 		}

@@ -41,7 +41,7 @@ final class PostStationController extends AbstractController
 
 			$station = Station::buildStation($request);
 
-			$repository = new StationRepositoryMysql();
+			$repository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
 
 			try
 			{
@@ -59,6 +59,7 @@ final class PostStationController extends AbstractController
 				201,
 				array(
 					'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
 				));
 
 		}

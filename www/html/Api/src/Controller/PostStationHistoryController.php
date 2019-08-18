@@ -33,8 +33,8 @@ final class PostStationHistoryController extends AbstractController
 
 			$stationHistory = StationHistory::buildStationHistory($uuidStation, $request);
 
-			$repository = new StationRepositoryMysql();
-			$cacheDataRepository = new CacheDataRepositoryRedis();
+			$repository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
+			$cacheDataRepository = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
 			/*try
 			{*/
@@ -52,6 +52,7 @@ final class PostStationHistoryController extends AbstractController
 				201,
 				array(
 					'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
 				));
 
 		}

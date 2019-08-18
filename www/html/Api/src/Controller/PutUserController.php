@@ -29,7 +29,7 @@ final class PutUserController extends AbstractController
         try
         {
             $userRepository = new UserRepositoryMysql();
-            $cacheData = new CacheDataRepositoryRedis();
+            $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
             $findUser = new FindUser($userRepository,$cacheData);
             $user = $findUser($uuidUser);
@@ -68,6 +68,7 @@ final class PutUserController extends AbstractController
                 200,
                 array(
                     'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
                 ));
 
         }

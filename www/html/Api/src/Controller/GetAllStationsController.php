@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
-use App\Aplication\Station\FindAllStation;
+use App\Aplication\Station\FindAllLocalStation;
+use App\Aplication\Station\FindAllStations;
+use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
+use App\Infraestructure\StationRemoteRepositoryApi;
 use App\Infraestructure\StationRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,13 +23,18 @@ final class GetAllStationsController extends AbstractController
 
 		try{
 			$stations=[];
-			$stationRepository = new StationRepositoryMysql();
-			$cacheData = new CacheDataRepositoryRedis();
+			$stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
+			try{
+                $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
+            }catch (RedisConectionErrorException $e){
+			    throw new StationErrorException($e->getMessage(),$e->getCode());
+            }
+            $remoteRepository = new StationRemoteRepositoryApi();
 
-
-			$findAllStations = new FindAllStation($stationRepository,$cacheData);
+			$findAllStations = new FindAllStations($stationRepository,$remoteRepository,$cacheData);
 			$allStations = $findAllStations();
 
+			//var_dump($allStations);
 			$count = count($allStations);
 
 			for ($i=0;$i<$count;$i++)
@@ -39,6 +47,7 @@ final class GetAllStationsController extends AbstractController
 			$jsonResponse = new JsonResponse($stations,200,
 				array(
 					'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
 				));
 
 			$jsonResponse->setEncodingOptions(400);

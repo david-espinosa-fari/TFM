@@ -16,7 +16,8 @@ final class TestMeteosalleController extends AbstractController
 		return new JsonResponse(
 			['message' => 'Success, the api status is up!!!'], 200,
 			array(
-				'Content-Type' => 'application/json'
+				'Content-Type' => 'application/json',
+                'User-Agent'=>'MeteoSalleMiddel',
 			));
     }
 }
