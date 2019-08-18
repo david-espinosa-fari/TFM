@@ -43,7 +43,6 @@ services:
       - mysql
       - redis
       - rabbitmq
-      - elasticsearch
 
   redis:
     image: redis
