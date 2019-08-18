@@ -38,6 +38,9 @@
     "nikic/php-parser": {
         "version": "v4.2.2"
     },
+    "php-amqplib/php-amqplib": {
+        "version": "v2.10.0"
+    },
     "predis/predis": {
         "version": "v1.1.1"
     },
@@ -147,6 +150,12 @@
             "./src/Controller/.gitignore",
             "./src/Kernel.php"
         ]
+    },
+    "symfony/http-client": {
+        "version": "v4.3.3"
+    },
+    "symfony/http-client-contracts": {
+        "version": "v1.1.5"
     },
     "symfony/http-foundation": {
         "version": "v4.3.3"
