@@ -44,6 +44,7 @@ final class DeleteUserController extends AbstractController
             $jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
                 array(
                     'Content-Type' => 'application/json',
+                    'User-Agent'=>'MeteoSalleMiddel',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

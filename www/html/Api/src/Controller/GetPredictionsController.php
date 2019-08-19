@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class GetPredictionsController extends AbstractController
+final class GetPredictionsController extends AbstractController
 {
     /**
      * @Route("/apiv1/predictions/{postalCode}", name="get_predictions", methods={"GET"})
@@ -34,7 +34,7 @@ class GetPredictionsController extends AbstractController
                 if ($_SERVER['ENV']==='env'){
                     throw new StationErrorException($exception->getMessage(), 404);
                 }
-                throw new StationErrorException('Error conecting to remote services', 404);
+                throw new StationErrorException('Error conecting to remote services', 500);
             }
 
 

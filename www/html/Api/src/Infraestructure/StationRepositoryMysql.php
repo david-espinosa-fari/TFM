@@ -171,10 +171,8 @@ final class StationRepositoryMysql implements StationRepository
             return $findPredictions->findPredictionsByPostalCode($postalCode);
 
         } catch (LocationCodeError $e) {
-            //echo 'findPredictionsStation '.$e->getMessage();
-        }/*catch (ApiConectionError $e){
-            echo 'Error Conectin Api ',$e->getMessage();
-        }*/
+        }
+
 
 
 
