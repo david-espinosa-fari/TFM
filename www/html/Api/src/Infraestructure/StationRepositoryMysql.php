@@ -165,11 +165,10 @@ final class StationRepositoryMysql implements StationRepository
 	public function findPredictionsStation($postalCode): array
     {
         try {
-            $locationCode = $this->findLocationCode($postalCode);
             $apiRepository = new StationRemoteRepositoryApi();
-            $findPredictions = new FindRemotePredictionStations($apiRepository);
+            $findPredictions = new FindRemotePredictionStations($apiRepository,$this);
 
-            return $findPredictions->findPredictionsBy($locationCode);
+            return $findPredictions->findPredictionsByPostalCode($postalCode);
 
         } catch (LocationCodeError $e) {
             //echo 'findPredictionsStation '.$e->getMessage();
