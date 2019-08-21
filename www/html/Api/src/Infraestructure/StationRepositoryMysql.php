@@ -3,7 +3,6 @@
 namespace App\Infraestructure;
 
 use App\Aplication\Station\FindRemotePredictionStations;
-use App\Aplication\UpdateCache;
 use App\Domain\Error\ApiConectionError;
 use App\Domain\Error\LocationCodeError;
 use App\Domain\Error\RedisConectionErrorException;

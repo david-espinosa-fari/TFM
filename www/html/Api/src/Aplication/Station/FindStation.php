@@ -3,8 +3,11 @@
 namespace App\Aplication\Station;
 
 use App\Domain\CacheDataRepository;
+use App\Domain\Events\OnUpdateStation;
 use App\Domain\Station;
 use App\Domain\StationRepository;
+use App\Domain\TailMessageRepository;
+use App\Infraestructure\TailsRepositoryRabbit;
 
 final class FindStation
 {
@@ -17,18 +20,30 @@ final class FindStation
 	 * @var CacheDataRepository
 	 */
 	private $cacheDataRepository;
+    /**
+     * @var TailMessageRepository
+     */
+    private $tailMessageRepository;
 
-	public function __construct(StationRepository $repository, CacheDataRepository $cacheDataRepository)
+    public function __construct
+    (
+	    StationRepository $repository,
+        CacheDataRepository $cacheDataRepository,
+        TailMessageRepository $tailMessageRepository
+    )
 	{
 		$this->repository = $repository;
 		$this->cacheDataRepository = $cacheDataRepository;
-	}
+        $this->tailMessageRepository = $tailMessageRepository;
+    }
 
 	public function __invoke($uuidStation):Station
 	{
-		$query = md5($uuidStation);
+		//$query = md5($uuidStation);
+		$query = $uuidStation;
 
 		$response = $this->cacheDataRepository->find($query);
+		//var_dump($response);
 		if (!empty($response))
 		{
 			$station = new Station
@@ -50,7 +65,10 @@ final class FindStation
 
 		$station = $this->repository->findStation($uuidStation);
 
-		$this->cacheDataRepository->insert($query, $station->getStationLikeArray(), 10);
+		//$rabbit = new TailsRepositoryRabbit();
+		$event = new OnUpdateStation($station);
+		$this->tailMessageRepository->publishEvent($event);
+		//$this->cacheDataRepository->insert($query, $station->getStationLikeArray(), 10);
 		}
 		return $station;
 

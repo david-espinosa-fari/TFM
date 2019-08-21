@@ -7,6 +7,7 @@ use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRepositoryMysql;
+use App\Infraestructure\TailsRepositoryRabbit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,8 +32,9 @@ final class GetOneStationController extends AbstractController
 
 			$stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
 			$cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
+			$tails = new TailsRepositoryRabbit();
 
-			$findStation = new FindStation($stationRepository, $cacheData);
+			$findStation = new FindStation($stationRepository, $cacheData, $tails);
 			$station = $findStation($uuidStation);
 
 			$jsonResponse = new JsonResponse($station->getStationLikeArray(),200,

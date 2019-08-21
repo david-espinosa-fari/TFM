@@ -7,5 +7,5 @@ interface CacheDataRepository
 
 	public function find($hashMd5FromQuery);
 
-	public function insert($keyHashMd5, $dataToCache, $timeExpire): void;
+	public function insert(string $valueToInsert, array $dataToCache, $timeExpire): void;
 }
