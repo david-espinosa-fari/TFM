@@ -3,9 +3,11 @@
 namespace App\Aplication\Station;
 
 use App\Domain\CacheDataRepository;
+use App\Domain\Events\OnUpdateStation;
 use App\Domain\Station;
 use App\Domain\StationErrorException;
 use App\Domain\StationRepository;
+use App\Domain\TailMessageRepository;
 
 final class FindAllLocalStation
 {
@@ -18,16 +20,25 @@ final class FindAllLocalStation
 	 * @var CacheDataRepository
 	 */
 	private $cacheDataRepository;
+    /**
+     * @var TailMessageRepository
+     */
+    private $tailMessageRepository;
 
-	public function __construct(StationRepository $repository, CacheDataRepository $cacheDataRepository)
+    public function __construct(
+	    StationRepository $repository,
+        CacheDataRepository $cacheDataRepository,
+        TailMessageRepository $tailMessageRepository
+)
 	{
 		$this->repository = $repository;
 		$this->cacheDataRepository = $cacheDataRepository;
-	}
+        $this->tailMessageRepository = $tailMessageRepository;
+    }
 
 	public function __invoke():array
 	{
-		$query = md5(self::CACHE_KEY_VALUE);
+		$query = self::CACHE_KEY_VALUE;
 
 		$response = $this->cacheDataRepository->find($query);
 
@@ -41,7 +52,7 @@ final class FindAllLocalStation
 
 	public function findWithOutCache():array
 	{
-        $query = md5(self::CACHE_KEY_VALUE);
+        $query = self::CACHE_KEY_VALUE;
 		$stations = $this->repository->findAllStation();
 
 		$count = count($stations);
@@ -49,17 +60,16 @@ final class FindAllLocalStation
 		{
 			if (!empty($stations[$i]))
 			{
-				$stationCache = $stations[$i]->getStationLikeArray();
-				$key = md5((string)$stations[$i]);
+                $event = new OnUpdateStation($stations[$i]);
+                $this->tailMessageRepository->publishEvent($event);
 
-				$this->cacheDataRepository->insert($key, $stationCache, 10);//inserto en la cache cada registro encontrado individualmente
-
-				$allStationsCache[] = $stationCache;
+                $stationCache = $stations[$i]->getStationLikeArray();
+                $allStationsCache[] = $stationCache;
 			}
 		}
 		if (!empty($allStationsCache))
 		{
-			$this->cacheDataRepository->insert($query, $allStationsCache, 10);
+			$this->cacheDataRepository->insert($query, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
 		}
 
 		return $stations;

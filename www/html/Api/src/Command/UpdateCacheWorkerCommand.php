@@ -9,6 +9,7 @@ use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRemoteRepositoryApi;
 use App\Infraestructure\StationRepositoryMysql;
+use App\Infraestructure\TailsRepositoryRabbit;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,20 +25,23 @@ class UpdateCacheWorkerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->io = new SymfonyStyle($input, $output);
         try{
-        $stationRepository = new StationRepositoryMysql($_SERVER['HOST_WORKER_MYSQL']);
-        $stationsRemoteRepository = new StationRemoteRepositoryApi();
 
-        $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_WORKER_REDIS']);
+            $this->io = new SymfonyStyle($input, $output);
+            $stationRepository = new StationRepositoryMysql($_SERVER['HOST_WORKER_MYSQL']);
+            $stationsRemoteRepository = new StationRemoteRepositoryApi();
+            $tails = new TailsRepositoryRabbit($_SERVER['HOST_WORKER_RABBIT']);
+            $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_WORKER_REDIS']);
 
             $findAllStations = new FindAllStations
             (
                 $stationRepository,
                 $stationsRemoteRepository,
-                $cacheData
+                $cacheData,
+                $tails
             );
-            $allStations = $findAllStations->findWithOutCache();
+
+            $allStations = $findAllStations->findWithOutCache(true);
 
             if (is_array($allStations))
             {
@@ -45,8 +49,6 @@ class UpdateCacheWorkerCommand extends Command
             }
 
         $this->listenerEventForUpdateCache($cacheData);
-
-
 
 
         }catch (RedisConectionErrorException $e)
@@ -81,6 +83,7 @@ class UpdateCacheWorkerCommand extends Command
 
             $message = json_decode($msg->body, true);
             $cacheData->insert($message['uuidStation'],$message);
+
         };
 
         $channel->basic_consume($queue_name, '', false, true, false, false, $callback);

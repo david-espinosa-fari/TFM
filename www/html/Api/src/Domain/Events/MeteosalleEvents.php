@@ -8,5 +8,5 @@ interface MeteosalleEvents
 {
     public function __toString():string;
 
-    public function getDataAsJson():string ;
+    public function getDataAsJson():string;
 }

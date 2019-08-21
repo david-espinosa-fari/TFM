@@ -32,7 +32,7 @@ final class GetOneStationController extends AbstractController
 
 			$stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
 			$cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
-			$tails = new TailsRepositoryRabbit();
+			$tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
 
 			$findStation = new FindStation($stationRepository, $cacheData, $tails);
 			$station = $findStation($uuidStation);

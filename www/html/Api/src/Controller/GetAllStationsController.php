@@ -9,6 +9,7 @@ use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRemoteRepositoryApi;
 use App\Infraestructure\StationRepositoryMysql;
+use App\Infraestructure\TailsRepositoryRabbit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,8 +31,9 @@ final class GetAllStationsController extends AbstractController
 			    throw new StationErrorException($e->getMessage(),$e->getCode());
             }
             $remoteRepository = new StationRemoteRepositoryApi();
+            $tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
 
-			$findAllStations = new FindAllStations($stationRepository,$remoteRepository,$cacheData);
+			$findAllStations = new FindAllStations($stationRepository,$remoteRepository,$cacheData,$tails);
 			$allStations = $findAllStations();
 
 			//var_dump($allStations);

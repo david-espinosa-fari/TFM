@@ -8,7 +8,7 @@ use App\Domain\Station;
 
 class OnUpdateStation implements MeteosalleEvents
 {
-    private const EVENT_NAME = 'onUpdate';
+    private const RABBIT_TAIL = 'onUpdate';
     /**
      * @var string
      */
@@ -22,7 +22,7 @@ class OnUpdateStation implements MeteosalleEvents
 
     public function __toString():string
     {
-        return self::EVENT_NAME;
+        return self::RABBIT_TAIL;
     }
 
     public function getDataAsJson():string

@@ -13,9 +13,9 @@ class TailsRepositoryRabbit implements TailMessageRepository
 	private $channel;
 	private $connection;
 
-	public function __construct()
+	public function __construct($host)
 	{
-		$this->connection = new AMQPStreamConnection($_SERVER['HOST_RABBIT'], 5672, $_SERVER['RABBIT_USER'],
+		$this->connection = new AMQPStreamConnection($host, 5672, $_SERVER['RABBIT_USER'],
 			$_SERVER['RABBIT_PASS']);
 		$this->channel = $this->connection->channel();
 	}

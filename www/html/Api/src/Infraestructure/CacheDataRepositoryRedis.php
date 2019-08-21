@@ -44,7 +44,13 @@ final class CacheDataRepositoryRedis implements CacheDataRepository
 
 	public function insert(string $valueToInsert, array $dataToCache, $timeExpire=null): void
 	{
-        $timeToLive = $_SERVER['TIME_TO_LIVE_CACHE'];
+	    if ($timeExpire !==null)
+        {
+            $timeToLive =  $timeExpire;
+        }else{
+
+            $timeToLive = $_SERVER['TIME_TO_LIVE_CACHE'];
+        }
 
 		$jsonEncode = json_encode($dataToCache,false);
         $key = md5($valueToInsert);

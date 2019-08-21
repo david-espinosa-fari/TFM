@@ -10,6 +10,7 @@ use App\Domain\Error\RemoteStationsNotFound;
 use App\Domain\Station;
 use App\Domain\StationRemoteRepository;
 use App\Domain\StationRepository;
+use App\Domain\TailMessageRepository;
 
 class FindAllStations
 {
@@ -23,22 +24,28 @@ class FindAllStations
      * @var
      */
     private $cache;
+    /**
+     * @var TailMessageRepository
+     */
+    private $tailMessageRepository;
 
     public function __construct
     (
         StationRepository $repository,
         StationRemoteRepository $remoteRepository,
-        CacheDataRepository $cache
+        CacheDataRepository $cache,
+        TailMessageRepository $tailMessageRepository
     )
     {
         $this->repository = $repository;
         $this->remoteRepository = $remoteRepository;
         $this->cache = $cache;
+        $this->tailMessageRepository = $tailMessageRepository;
     }
 
     public function __invoke()
     {
-        $query = md5(self::CACHE_KEY_VALUE);
+        $query = self::CACHE_KEY_VALUE;
 
         $response = $this->cache->find($query);
 
@@ -48,25 +55,33 @@ class FindAllStations
 
         }
         //aqui seria lanzar el evento
-        return $this->findWithOutCache();
+        return $this->findWithOutCache(false);
     }
 
-    public function findWithOutCache(): array
+    public function findWithOutCache($withoutCache = false): array
     {
-        $query = md5(self::CACHE_KEY_VALUE);
-        $localStations = new FindAllLocalStation($this->repository,$this->cache);
-        $localStations = $localStations->findWithOutCache();
+        $query = self::CACHE_KEY_VALUE;
+        $localStations = new FindAllLocalStation($this->repository,$this->cache,$this->tailMessageRepository);
+        if ($withoutCache)
+        {
+            $localStations = $localStations->findWithOutCache();
+        }else{
+            $localStations = $localStations();
+        }
 
         try{
-            $remoteStations = new FindAllRemoteStations($this->remoteRepository, $this->cache);
-            $remoteStations = $remoteStations->findWithOutCache();
+            $remoteStations = new FindAllRemoteStations($this->remoteRepository, $this->cache,$this->tailMessageRepository);
+            if ($withoutCache)
+            {
+                $remoteStations = $remoteStations->findWithOutCache();
+            }else{
+                $remoteStations = $remoteStations();
+            }
 
             $allStations = array_merge($localStations, $remoteStations);
         }catch (RemoteStationsNotFound $exception)
         {
-            //log this
             $allStations = $localStations;
-            //lanzar evento para volver a buscar
         }catch (ApiConectionError $exception){
             $allStations = $localStations;
         }
@@ -84,7 +99,7 @@ class FindAllStations
                 }
             }
 
-            $this->cache->insert($query, $allStationsCache, 10);
+            //$this->cache->insert($query, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
         }
 
         return $allStations;

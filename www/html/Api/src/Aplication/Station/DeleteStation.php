@@ -23,11 +23,10 @@ final class DeleteStation
 		$this->cacheDataRepository = $cacheDataRepository;
 	}
 
-	public function __invoke($uuidStation)
+	public function __invoke($uuidStation):void
 	{
-		$query = md5($uuidStation);
 		$this->repository->deleteStation($uuidStation);
 
-		$this->cacheDataRepository->insert($query,'',0);
+		$this->cacheDataRepository->insert($uuidStation,[''],0);
 	}
 }

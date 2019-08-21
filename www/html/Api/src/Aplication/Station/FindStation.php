@@ -39,10 +39,7 @@ final class FindStation
 
 	public function __invoke($uuidStation):Station
 	{
-		//$query = md5($uuidStation);
-		$query = $uuidStation;
-
-		$response = $this->cacheDataRepository->find($query);
+		$response = $this->cacheDataRepository->find($uuidStation);
 		//var_dump($response);
 		if (!empty($response))
 		{
@@ -65,10 +62,9 @@ final class FindStation
 
 		$station = $this->repository->findStation($uuidStation);
 
-		//$rabbit = new TailsRepositoryRabbit();
 		$event = new OnUpdateStation($station);
 		$this->tailMessageRepository->publishEvent($event);
-		//$this->cacheDataRepository->insert($query, $station->getStationLikeArray(), 10);
+
 		}
 		return $station;
 

@@ -6,6 +6,7 @@ use App\Aplication\Station\CreateStation;
 use App\Domain\Station;
 use App\Domain\StationErrorException;
 use App\Infraestructure\StationRepositoryMysql;
+use App\Infraestructure\TailsRepositoryRabbit;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -42,10 +43,10 @@ final class PostStationController extends AbstractController
 			$station = Station::buildStation($request);
 
 			$repository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
-
+            $tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
 			try
 			{
-				$createStation = new CreateStation($repository);
+				$createStation = new CreateStation($repository,$tails);
 				$createStation($station);
 
 			}

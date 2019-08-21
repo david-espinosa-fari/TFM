@@ -8,6 +8,7 @@ use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRepositoryMysql;
+use App\Infraestructure\TailsRepositoryRabbit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,8 +31,9 @@ final class PutStationController extends AbstractController
 		{
 			$stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
 			$cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
+            $tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
 
-			$findStation = new FindStation($stationRepository,$cacheData);
+			$findStation = new FindStation($stationRepository,$cacheData,$tails);
 			$station = $findStation($uuidStation);
 
 			if ($uuuidUser = $request->get('uuidUser'))
@@ -67,7 +69,7 @@ final class PutStationController extends AbstractController
 				$station->setUuidUser($uuuidUser);
 			}
 
-			$update = new UpdateStation($stationRepository, $cacheData);
+			$update = new UpdateStation($stationRepository, $tails);
 			$update($station);
 
 			return new JsonResponse(
