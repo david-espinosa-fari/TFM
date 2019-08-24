@@ -127,6 +127,7 @@ class FindAllStations
                     $response[$i]['location'],
                     $response[$i]['state']
                 );
+                $station->setTimestamp($response[$i]['timestamp']);
                 $station->setHistoric($response[$i]['historic']);
                 $station->setPredictions($response[$i]['predictions']);
 

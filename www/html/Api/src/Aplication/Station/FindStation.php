@@ -40,7 +40,6 @@ final class FindStation
 	public function __invoke($uuidStation):Station
 	{
 		$response = $this->cacheDataRepository->find($uuidStation);
-		//var_dump($response);
 		if (!empty($response))
 		{
 			$station = new Station
@@ -56,6 +55,7 @@ final class FindStation
 				$response['location'],
                 $response['state']
 			);
+            $station->setTimestamp($response['timestamp']);
 			$station->setHistoric($response['historic']);
 			$station->setPredictions($response['predictions']);
 
