@@ -6,6 +6,7 @@ namespace App\Infraestructure;
 
 use App\Domain\Error\ApiConectionError;
 use App\Domain\Error\RemoteStationsNotFound;
+use App\Domain\Events\OnUpdateStation;
 use App\Domain\Station;
 use App\Domain\StationRemoteRepository;
 use ErrorException;
@@ -74,7 +75,7 @@ class StationRemoteRepositoryApi implements StationRemoteRepository
     {
         try {
             $response = $this->httpClient->request(
-                'GET', self::ADDRESS_API .'prediction/'. $locationCode,
+                'GET', self::ADDRESS_API .'prediction/'. 8065,//$locationCode,
                 [
                     'buffer' => true
                 ]);
@@ -82,6 +83,109 @@ class StationRemoteRepositoryApi implements StationRemoteRepository
 
             if (200 !== $response->getStatusCode()) {
                   //$response->cancel();
+                throw new ApiConectionError('Error Status code '.$response->getStatusCode());
+            }
+            $response = $response->getContent(false);
+
+            $formatedResponse = $this->convertApiResponseToDomain($response);
+            $count = count($formatedResponse);
+
+            for ($i=0;$i<$count;$i++)
+            {
+                if (!empty($formatedResponse[$i]))
+                {
+                    $stationPrediction = $formatedResponse[$i]->getStationLikeArray();
+
+
+                    $allPredictions[] = $stationPrediction;
+                }
+            }
+
+            return $allPredictions;
+
+
+
+        }  catch (TransportExceptionInterface $e) {
+            throw new ApiConectionError('Transport Error '.$e->getMessage(),$e->getCode());
+        } catch (ClientExceptionInterface $e) {
+            throw new ApiConectionError('Client Error '.$e->getMessage(), $e->getCode());
+        } catch (RedirectionExceptionInterface $e) {
+            throw new ApiConectionError('Redirection Error '.$e->getMessage(), $e->getCode());
+        } catch (ServerExceptionInterface $e) {
+            throw new ApiConectionError('Remote server Error '.$e->getMessage(), $e->getCode());
+        } catch (RemoteStationsNotFound $e) {
+            throw new ApiConectionError('Remote server Error '.$e->getMessage(), $e->getCode());
+        }
+
+    }
+
+    private function convertApiResponseToDomain(string $apiResponse):array
+    {
+
+        $apiResponse = json_decode($apiResponse,true);
+        $stations = [];
+
+       // $apiResponse = $apiResponse[0];
+        if (is_array($apiResponse))
+        {
+        $count = count($apiResponse);
+
+        for ($i=0;$i<$count;$i++)
+        {
+          //  if (!empty($apiResponse[$i]) && !empty($apiResponse[$i]['stationId']))
+            //{
+
+                $uuidStation = utf8_encode($apiResponse[$i]['stationId']);
+                $uuidUser = utf8_encode($apiResponse[$i]['idApi']);
+                $latitud = utf8_encode($apiResponse[$i]['latitude']);
+                $longitud = utf8_encode($apiResponse[$i]['longitude']);
+                $postalCode = null; //$apiResponse[$i]['postalCode'];
+                $temp = utf8_encode($apiResponse[$i]['temperature']);
+                $humidity = utf8_encode($apiResponse[$i]['humidity']);
+                $presion = utf8_encode($apiResponse[$i]['pressure']);
+                $location = $apiResponse[$i]['location'];
+                $state = utf8_encode($apiResponse[$i]['state']);
+                $timestamp = $apiResponse[$i]['timeStamp'];
+                $station = new Station
+                (
+                    $uuidStation,
+                    $uuidUser,
+                    $latitud,
+                    $longitud,
+                    $postalCode,
+                    $temp,
+                    $humidity,
+                    $presion,
+                    $location,
+                    $state
+                );
+                $station->setTimestamp($timestamp);
+                //$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
+                //$station->setPredictions($this->findPredictionsStation($apiResponse[$i]['postalCode']));
+
+                $stations[] = $station;
+         //   }
+
+        }
+        return $stations;
+        }
+
+        throw new RemoteStationsNotFound('Remote stations not found ',500);
+
+    }
+
+    public function findStationsByLocationCode($locationCode):array
+    {
+
+        try {
+            $response = $this->httpClient->request(
+                'GET', self::ADDRESS_API .'station/'. 8065,//$locationCode,
+                [
+                    'buffer' => true
+                ]);
+
+            if (200 !== $response->getStatusCode()) {
+                //$response->cancel();
                 throw new ApiConectionError('Error Status code '.$response->getStatusCode());
             }
             $response = $response->getContent(false);
@@ -96,61 +200,9 @@ class StationRemoteRepositoryApi implements StationRemoteRepository
             throw new ApiConectionError('Redirection Error '.$e->getMessage(), $e->getCode());
         } catch (ServerExceptionInterface $e) {
             throw new ApiConectionError('Server Error '.$e->getMessage(), $e->getCode());
+        } catch (RemoteStationsNotFound $e) {
+            throw new ApiConectionError('Server Error '.$e->getMessage(), $e->getCode());
         }
-
-    }
-
-    private function convertApiResponseToDomain(string $apiResponse):array
-    {
-
-        $apiResponse = json_decode($apiResponse,true);
-        $stations = [];
-
-
-        if (is_array($apiResponse))
-        {
-
-        $count = count($apiResponse);
-        for ($i=0;$i<$count;$i++)
-        {
-          //  if (!empty($apiResponse[$i]) && !empty($apiResponse[$i]['stationId']))
-            //{
-
-                $uuidStation = utf8_encode($apiResponse[$i]['_id']);
-                $uuidUser = utf8_encode($apiResponse[$i]['idApi']);
-                $latitud = utf8_encode($apiResponse[$i]['latitude']);
-                $longitud = utf8_encode($apiResponse[$i]['longitude']);
-                $postalCode = null; //$apiResponse[$i]['postalCode'];
-                $temp = utf8_encode($apiResponse[$i]['temperature']);
-                $humidity = utf8_encode($apiResponse[$i]['humidity']);
-                $presion = utf8_encode($apiResponse[$i]['pressure']);
-                $location = utf8_encode($apiResponse[$i]['location']);
-                $state = utf8_encode($apiResponse[$i]['state']);
-                $station = new Station
-                (
-                    $uuidStation,
-                    $uuidUser,
-                    $latitud,
-                    $longitud,
-                    $postalCode,
-                    $temp,
-                    $humidity,
-                    $presion,
-                    $location,
-                    $state
-                );
-                //$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
-                //$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
-
-                $stations[] = $station;
-         //   }
-
-        }
-       // var_dump($stations);
-        return $stations;
-        }
-
-        throw new RemoteStationsNotFound('Stations not found ',500);
 
     }
 }
