@@ -79,7 +79,7 @@ class UpdateCacheWorkerCommand extends Command
 
             $message = json_decode($msg->body, true);
             $cacheData->insert($message['uuidStation'], $message);
-
+            echo 'Update cache for ' . $message['uuidStation'];
         };
 
         $channel->basic_consume($queue_name, '', false, true, false, false, $callback);

@@ -8,7 +8,7 @@ use App\Domain\StationRepository;
 
 final class AddStationHistory
 {
-
+    private const HISTORY_KEY = 'stationHistory';
     /**
      * @var StationRepository
      */
@@ -26,11 +26,11 @@ final class AddStationHistory
 
     public function __invoke(StationHistory $stationHistory)
     {
-        $query = md5((string)$stationHistory);
+        $query = self::HISTORY_KEY.(string)$stationHistory;
         $this->repository->addStationHistory($stationHistory);
 
+        $this->cacheDataRepository->insert((string)$stationHistory, [''], 0);
         $this->cacheDataRepository->insert($query, $stationHistory->getStationHostoryLikeArray(), 10);
-
 
     }
 }
