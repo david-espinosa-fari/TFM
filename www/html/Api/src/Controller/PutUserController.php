@@ -21,7 +21,6 @@ final class PutUserController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      * @throws RedisConectionErrorException
-     * @throws UserErrorException
      */
     public function index($uuidUser, Request $request):JsonResponse
     {

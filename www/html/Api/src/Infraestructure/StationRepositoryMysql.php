@@ -319,4 +319,49 @@ final class StationRepositoryMysql implements StationRepository
 			throw new StationErrorException('Could not insert value, check your request; station most exist', 400);
 		}
 	}
+
+    public function findUserStations($uuidUser):array
+    {
+        $stations=[];
+        $select = 'select uuidStation,uuidUser,latitud,longitud,postalCode,temp,humidity,presion,location,state';
+        $from = ' from station where deletedStation = '.'0'.' and `station`.`uuidUser` = ?';
+        $query = $select.$from;
+
+        $stmt = $this->conect->prepare($query);
+        $stmt->bindParam(1, $uuidUser);
+        $stmt->execute();
+        $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $count = count($response);
+        for ($i=0;$i<$count;$i++)
+        {
+            if (!empty($response[$i]) && !empty($response[$i]['uuidStation']))
+            {
+                $station = new Station
+                (
+                    $response[$i]['uuidStation'],
+                    $response[$i]['uuidUser'],
+                    $response[$i]['latitud'],
+                    $response[$i]['longitud'],
+                    $response[$i]['postalCode'],
+                    $response[$i]['temp'],
+                    $response[$i]['humidity'],
+                    $response[$i]['presion'],
+                    $response[$i]['location'],
+                    $response[$i]['state']
+                );
+                $station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
+                //$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
+
+                $stations[] = $station;
+            }
+
+        }
+        if (empty($stations))
+        {
+            throw new StationErrorException('Stations not Found ',404);
+        }
+
+        return $stations;
+    }
 }
