@@ -29,11 +29,11 @@ final class CreateUser
 
     public function __invoke(User $user)
     {
-        $query = md5((string)$user);
+        $query = (string)$user;
 
         $this->userRepositoryMysql->createUser($user);
 
-        $this->cacheDataRepositoryRedis->insert($query,$user->getUserLikeArray(),15);
+        $this->cacheDataRepositoryRedis->insert($query,$user->getUserLikeArray(),$_SERVER['TIME_TO_LIVE_CACHE']);
     }
 
 }
