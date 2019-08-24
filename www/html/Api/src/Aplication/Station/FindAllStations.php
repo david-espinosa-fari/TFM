@@ -124,7 +124,8 @@ class FindAllStations
                     $response[$i]['temp'],
                     $response[$i]['humidity'],
                     $response[$i]['presion'],
-                    $response[$i]['location']
+                    $response[$i]['location'],
+                    $response[$i]['state']
                 );
                 $station->setHistoric($response[$i]['historic']);
                 $station->setPredictions($response[$i]['predictions']);

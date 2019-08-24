@@ -53,7 +53,8 @@ final class FindStation
 				$response['temp'],
 				$response['humidity'],
 				$response['presion'],
-				$response['location']
+				$response['location'],
+                $response['state']
 			);
 			$station->setHistoric($response['historic']);
 			$station->setPredictions($response['predictions']);

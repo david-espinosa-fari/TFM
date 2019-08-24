@@ -14,8 +14,9 @@ final class Station
 	private $postalCode;
 	private $temp;
 	private $humidity;
+    private $state;
 
-	/**
+    /**
 	 * @param mixed $uuidUser
 	 */
 	public function setUuidUser($uuidUser): void
@@ -92,7 +93,8 @@ final class Station
 			$temp,
 			$humidity,
 			$presion,
-			$location
+			$location,
+            $state
 	)
 	{
 
@@ -105,7 +107,24 @@ final class Station
 		$this->humidity = $humidity;
 		$this->presion = $presion;
 		$this->location = $location;
-	}
+        $this->state = $state;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param mixed $state
+     */
+    public function setState($state): void
+    {
+        $this->state = $state;
+    }
 
 	public function __toString()
 	{
@@ -123,6 +142,7 @@ final class Station
 		$data['humidity']=$request->get('humidity');
 		$data['presion']=$request->get('presion');
 		$data['location']=$request->get('location');
+		$data['state']=$request->get('state');
 
 		foreach ($data as $datafield=>$value)
 		{
@@ -141,7 +161,8 @@ final class Station
 			$data['temp'],
 			$data['humidity'],
 			$data['presion'],
-			$data['location']
+			$data['location'],
+            $data['state']
 		);
 	}
 

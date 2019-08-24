@@ -29,7 +29,7 @@ final class FindAllLocalStation
 	    StationRepository $repository,
         CacheDataRepository $cacheDataRepository,
         TailMessageRepository $tailMessageRepository
-)
+    )
 	{
 		$this->repository = $repository;
 		$this->cacheDataRepository = $cacheDataRepository;
@@ -93,7 +93,8 @@ final class FindAllLocalStation
 					$response[$i]['temp'],
 					$response[$i]['humidity'],
 					$response[$i]['presion'],
-					$response[$i]['location']
+					$response[$i]['location'],
+					$response[$i]['state']
 				);
 				$station->setHistoric($response[$i]['historic']);
 				$station->setPredictions($response[$i]['predictions']);

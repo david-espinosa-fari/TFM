@@ -8,6 +8,7 @@ use App\Domain\Error\ApiConectionError;
 use App\Domain\Error\RemoteStationsNotFound;
 use App\Domain\Station;
 use App\Domain\StationRemoteRepository;
+use ErrorException;
 use Symfony\Component\HttpClient\CurlHttpClient;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -20,7 +21,7 @@ class StationRemoteRepositoryApi implements StationRemoteRepository
 {
 
     private $httpClient;
-    private const ADDRESS_API = 'http://192.168.1.37:9000/';
+    private const ADDRESS_API = 'http://192.168.1.38:9000/v1/';
    // private const ADDRESS_API = 'http://meteosalle.local/apiv1/stations/';
 
 
@@ -63,6 +64,8 @@ class StationRemoteRepositoryApi implements StationRemoteRepository
         } catch (RedirectionExceptionInterface $e) {
             throw new ApiConectionError('Redirection Error '.$e->getMessage(), $e->getCode());
         } catch (ServerExceptionInterface $e) {
+            throw new ApiConectionError('Server Error '.$e->getMessage(), $e->getCode());
+        }catch (ErrorException $e){
             throw new ApiConectionError('Server Error '.$e->getMessage(), $e->getCode());
         }
     }
@@ -122,6 +125,7 @@ class StationRemoteRepositoryApi implements StationRemoteRepository
                 $humidity = utf8_encode($apiResponse[$i]['humidity']);
                 $presion = utf8_encode($apiResponse[$i]['pressure']);
                 $location = utf8_encode($apiResponse[$i]['location']);
+                $state = utf8_encode($apiResponse[$i]['state']);
                 $station = new Station
                 (
                     $uuidStation,
@@ -132,7 +136,8 @@ class StationRemoteRepositoryApi implements StationRemoteRepository
                     $temp,
                     $humidity,
                     $presion,
-                    $location
+                    $location,
+                    $state
                 );
                 //$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
                 //$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));

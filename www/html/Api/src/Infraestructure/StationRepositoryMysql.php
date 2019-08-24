@@ -62,9 +62,10 @@ final class StationRepositoryMysql implements StationRepository
 			$humidity = $station->getHumidity();
 			$presion = $station->getPresion();
 			$location = $station->getLocation();
+			$state = $station->getState();
 
-			$fields = 'INSERT INTO `station`(uuidStation,uuidUser,latitud,longitud,postalCode,temp,humidity,presion,location)';
-			$values = ' VALUES (?,?,?,?,?,?,?,?,?)';
+			$fields = 'INSERT INTO `station`(uuidStation,uuidUser,latitud,longitud,postalCode,temp,humidity,presion,location,state)';
+			$values = ' VALUES (?,?,?,?,?,?,?,?,?,?)';
 			$query = $fields.$values;
 
 			$statment = $this->conect->prepare($query);
@@ -78,6 +79,7 @@ final class StationRepositoryMysql implements StationRepository
 			$statment->bindParam(7, $humidity);
 			$statment->bindParam(8, $presion);
 			$statment->bindParam(9, $location);
+			$statment->bindParam(10, $state);
 			if (!$statment->execute())
 			{
 				throw new StationErrorException('Could not insert value, check your request; user most exist and CHANGE your uuidStation', 400);
@@ -87,7 +89,7 @@ final class StationRepositoryMysql implements StationRepository
 
 	public function findStation(string $uuidStation): Station
 	{
-		$select = 'select uuidStation, uuidUser, latitud, longitud, postalCode,  temp, humidity, presion, location';
+		$select = 'select uuidStation, uuidUser, latitud, longitud, postalCode,  temp, humidity, presion, location, state';
 		$from = ' from `station` where `station`.`uuidStation` = ? and deletedStation = '.'0'.'';
 		$query = $select.$from;
 
@@ -109,7 +111,8 @@ final class StationRepositoryMysql implements StationRepository
 			$response['temp'],
 			$response['humidity'],
 			$response['presion'],
-			$response['location']
+			$response['location'],
+			$response['state']//esto es para el nuevo campo abria que agregarlo en las conversiones de redis
 		);
 			$station->setHistoric($this->findHistorycStation($uuidStation));
 			try{
@@ -161,7 +164,7 @@ final class StationRepositoryMysql implements StationRepository
         throw new LocationCodeError();
 	}
 
-	public function findPredictionsStation($postalCode): array
+	public function findPredictionsStation($postalCode): ?array
     {
         try {
             $apiRepository = new StationRemoteRepositoryApi();
@@ -208,7 +211,7 @@ final class StationRepositoryMysql implements StationRepository
 	public function findAllStation():array
 	{
 		$stations=[];
-		$select = 'select uuidStation,uuidUser,latitud,longitud,postalCode,temp,humidity,presion,location';
+		$select = 'select uuidStation,uuidUser,latitud,longitud,postalCode,temp,humidity,presion,location,state';
 		$from = ' from station where deletedStation = '.'0'.'';
 		$query = $select.$from;
 
@@ -232,7 +235,8 @@ final class StationRepositoryMysql implements StationRepository
 					$response[$i]['temp'],
 					$response[$i]['humidity'],
 					$response[$i]['presion'],
-					$response[$i]['location']
+					$response[$i]['location'],
+                    $response[$i]['state']
 				);
 				$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
 				//$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
@@ -258,9 +262,10 @@ final class StationRepositoryMysql implements StationRepository
 		$postalCode = $station->getPostalCode();
 		$temp = $station->getTemp();
 		$humidity = $station->getHumidity();
+		$state = $station->getState();
 
 		$update = "UPDATE `station` SET ";
-		$values = "uuidUser = :uuidUser, latitud =:latitud, longitud=:longitud, postalCode=:postalCode, temp=:temp, humidity=:humidity";
+		$values = "uuidUser = :uuidUser, latitud =:latitud, longitud=:longitud, postalCode=:postalCode, temp=:temp, humidity=:humidity, state=:state";
 		$where = " WHERE uuidStation = :uuidStation";
 
 		$query = $update.$values.$where;
@@ -273,6 +278,7 @@ final class StationRepositoryMysql implements StationRepository
 		$statment->bindValue(':postalCode', $postalCode);
 		$statment->bindValue(':temp', $temp);
 		$statment->bindValue(':humidity', $humidity);
+		$statment->bindValue(':state', $state);
 		$statment->execute();
 	}
 

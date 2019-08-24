@@ -58,15 +58,19 @@ final class PutStationController extends AbstractController
 			}
 			if ($humidity = $request->get('humidity'))
 			{
-				$station->setUuidUser($uuuidUser);
+				$station->setHumidity($humidity);
 			}
 			if ($presion = $request->get('presion'))
 			{
-				$station->setUuidUser($uuuidUser);
+				$station->setPresion($presion);
 			}
 			if ($location = $request->get('location'))
 			{
-				$station->setUuidUser($uuuidUser);
+				$station->setLocation($location);
+			}
+			if ($state = $request->get('state'))
+			{
+				$station->setState($state);
 			}
 
 			$update = new UpdateStation($stationRepository, $tails);
