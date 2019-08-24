@@ -15,47 +15,41 @@ use Symfony\Component\Routing\Annotation\Route;
 final class GetOneStationController extends AbstractController
 {
 
-	//Ejemplo de peticion
-	/*
-	 * GET http://meteosalle.local/apiv1/stations/{uuid de una estacion}
-	 * */
-	/**
-	 * @Route("/apiv1/stations/{uuidStation}", name="get_one_station", methods={"GET"})
-	 * @param $uuidStation
-	 * @return JsonResponse
-	 * @throws RedisConectionErrorException
-	 */
-	public function index($uuidStation):JsonResponse
-	{
+    /**
+     * @Route("/apiv1/stations/{uuidStation}", name="get_one_station", methods={"GET"})
+     * @param $uuidStation
+     * @return JsonResponse
+     * @throws RedisConectionErrorException
+     */
+    public function index($uuidStation): JsonResponse
+    {
 
-		try{
+        try {
 
-			$stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
-			$cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
-			$tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
+            $stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
+            $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
+            $tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
 
-			$findStation = new FindStation($stationRepository, $cacheData, $tails);
-			$station = $findStation($uuidStation);
+            $findStation = new FindStation($stationRepository, $cacheData, $tails);
+            $station = $findStation($uuidStation);
 
-			$jsonResponse = new JsonResponse($station->getStationLikeArray(),200,
-				array(
-					'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
-				));
+            $jsonResponse = new JsonResponse($station->getStationLikeArray(), 200,
+                array(
+                    'Content-Type' => 'application/json',
+                    'User-Agent' => 'MeteoSalleMiddel',
+                ));
 
-			$jsonResponse->setEncodingOptions(400);
-			return $jsonResponse;
-		}
-		catch (StationErrorException $e)
-		{
-			$jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
-				array(
-					'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
-				));
+            $jsonResponse->setEncodingOptions(400);
+            return $jsonResponse;
+        } catch (StationErrorException $e) {
+            $jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
+                array(
+                    'Content-Type' => 'application/json',
+                    'User-Agent' => 'MeteoSalleMiddel',
+                ));
 
-			$jsonResponse->setEncodingOptions(400);
-			return $jsonResponse;
-		}
-	}
+            $jsonResponse->setEncodingOptions(400);
+            return $jsonResponse;
+        }
+    }
 }

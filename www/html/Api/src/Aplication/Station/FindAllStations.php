@@ -12,7 +12,7 @@ use App\Domain\StationRemoteRepository;
 use App\Domain\StationRepository;
 use App\Domain\TailMessageRepository;
 
-class FindAllStations
+final class FindAllStations
 {
     private const CACHE_KEY_VALUE = 'allStations';
     private $repository;
@@ -49,71 +49,19 @@ class FindAllStations
 
         $response = $this->cache->find($query);
 
-        if (!empty($response) && is_array($response))
-        {
+        if (!empty($response) && is_array($response)) {
             return $this->convertArrayToStandardResponse($response);
 
         }
-        //aqui seria lanzar el evento
         return $this->findWithOutCache(false);
     }
 
-    public function findWithOutCache($withoutCache = false): array
+    private function convertArrayToStandardResponse(array $response): array
     {
-        $query = self::CACHE_KEY_VALUE;
-        $localStations = new FindAllLocalStation($this->repository,$this->cache,$this->tailMessageRepository);
-        if ($withoutCache)
-        {
-            $localStations = $localStations->findWithOutCache();
-        }else{
-            $localStations = $localStations();
-        }
-
-        try{
-            $remoteStations = new FindAllRemoteStations($this->remoteRepository, $this->cache,$this->tailMessageRepository);
-            if ($withoutCache)
-            {
-                $remoteStations = $remoteStations->findWithOutCache();
-            }else{
-                $remoteStations = $remoteStations();
-            }
-
-            $allStations = array_merge($localStations, $remoteStations);
-        }catch (RemoteStationsNotFound $exception)
-        {
-            $allStations = $localStations;
-        }catch (ApiConectionError $exception){
-            $allStations = $localStations;
-        }
-
-        if (!empty($allStations) && is_array($allStations))
-        {
-            $count = count($allStations);
-            for ($i=0;$i<$count;$i++)
-            {
-                if (!empty($allStations[$i]))
-                {
-                    $stationCache = $allStations[$i]->getStationLikeArray();
-
-                    $allStationsCache[] = $stationCache;
-                }
-            }
-
-            //$this->cache->insert($query, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
-        }
-
-        return $allStations;
-
-    }
-
-    private function convertArrayToStandardResponse(array $response):array
-    {
-        $stations=[];
+        $stations = [];
         $count = count($response);
-        for ($i=0;$i<$count;$i++)
-        {
-            if (!empty($response[$i]))
-            {
+        for ($i = 0; $i < $count; $i++) {
+            if (!empty($response[$i])) {
                 $station = new Station
                 (
                     $response[$i]['uuidStation'],
@@ -136,6 +84,48 @@ class FindAllStations
 
         }
         return $stations;
+    }
+
+    public function findWithOutCache($withoutCache = false): array
+    {
+        //$query = self::CACHE_KEY_VALUE;
+        $localStations = new FindAllLocalStation($this->repository, $this->cache, $this->tailMessageRepository);
+        if ($withoutCache) {
+            $localStations = $localStations->findWithOutCache();
+        } else {
+            $localStations = $localStations();
+        }
+
+        try {
+            $remoteStations = new FindAllRemoteStations($this->remoteRepository, $this->cache, $this->tailMessageRepository);
+            if ($withoutCache) {
+                $remoteStations = $remoteStations->findWithOutCache();
+            } else {
+                $remoteStations = $remoteStations();
+            }
+
+            $allStations = array_merge($localStations, $remoteStations);
+        } catch (RemoteStationsNotFound $exception) {
+            $allStations = $localStations;
+        } catch (ApiConectionError $exception) {
+            $allStations = $localStations;
+        }
+
+        if (!empty($allStations) && is_array($allStations)) {
+            $count = count($allStations);
+            for ($i = 0; $i < $count; $i++) {
+                if (!empty($allStations[$i])) {
+                    $stationCache = $allStations[$i]->getStationLikeArray();
+
+                    $allStationsCache[] = $stationCache;
+                }
+            }
+
+            //$this->cache->insert($query, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
+        }
+
+        return $allStations;
+
     }
 
 }

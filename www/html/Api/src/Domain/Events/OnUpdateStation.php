@@ -20,12 +20,12 @@ class OnUpdateStation implements MeteosalleEvents
 
     }
 
-    public function __toString():string
+    public function __toString(): string
     {
         return self::RABBIT_TAIL;
     }
 
-    public function getDataAsJson():string
+    public function getDataAsJson(): string
     {
         return json_encode($this->payload);
     }

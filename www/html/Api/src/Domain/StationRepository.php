@@ -4,22 +4,22 @@ namespace App\Domain;
 
 interface StationRepository
 {
-	public function createStation(Station $station):void;
+    public function createStation(Station $station): void;
 
-	public function findStation(string $uuidStation): Station;
+    public function findStation(string $uuidStation): Station;
 
-	public function findAllStation():array;
+    public function findAllStation(): array;
 
-	public function updateStation(Station $uuidStation):void;
+    public function updateStation(Station $uuidStation): void;
 
-	public function deleteStation($uuidStation):void;
+    public function deleteStation($uuidStation): void;
 
-	public function addStationHistory(StationHistory $stationHistory):void;
+    public function addStationHistory(StationHistory $stationHistory): void;
 
-    public function findLocationCode($postalCode):string;
+    public function findLocationCode($postalCode): string;
 
-    public function findUserStations($uuidUser):array;
+    public function findUserStations($uuidUser): array;
 
-    public function findStationsByPostalCode($postalCode):array;
+    public function findStationsByPostalCode($postalCode): array;
 
 }

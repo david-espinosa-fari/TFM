@@ -26,11 +26,11 @@ final class UpdateUser
         $this->cacheDataRepository = $cacheDataRepository;
     }
 
-    public function __invoke(User $user):void
+    public function __invoke(User $user): void
     {
         $this->repository->updateUser($user);
 
-        $query = md5((string)$user);
+        $query = (string)$user;
         $this->cacheDataRepository->insert($query, $user->getUserLikeArray(), 10);
     }
 }

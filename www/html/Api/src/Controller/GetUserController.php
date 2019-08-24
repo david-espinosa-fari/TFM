@@ -19,10 +19,10 @@ final class GetUserController extends AbstractController
      * @return JsonResponse
      * @throws RedisConectionErrorException
      */
-    public function index($uuidUser):JsonResponse
+    public function index($uuidUser): JsonResponse
     {
 
-        try{
+        try {
 
             $stationRepository = new UserRepositoryMysql();
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
@@ -30,21 +30,19 @@ final class GetUserController extends AbstractController
             $findUser = new FindUser($stationRepository, $cacheData);
             $user = $findUser($uuidUser);
 
-            $jsonResponse = new JsonResponse($user->getUserLikeArray(),200,
+            $jsonResponse = new JsonResponse($user->getUserLikeArray(), 200,
                 array(
                     'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
+                    'User-Agent' => 'MeteoSalleMiddel',
                 ));
 
             $jsonResponse->setEncodingOptions(400);
             return $jsonResponse;
-        }
-        catch (UserErrorException $e)
-        {
+        } catch (UserErrorException $e) {
             $jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
                 array(
                     'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
+                    'User-Agent' => 'MeteoSalleMiddel',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

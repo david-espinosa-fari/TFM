@@ -25,11 +25,10 @@ final class FindUser
         $this->cacheDataRepository = $cacheDataRepository;
     }
 
-    public function __invoke($uuidUser):user
+    public function __invoke($uuidUser): user
     {
         $response = $this->cacheDataRepository->find($uuidUser);
-        if (!empty($response))
-        {
+        if (!empty($response)) {
             $user = new User
             (
                 $response['uuidUser'],
@@ -41,7 +40,7 @@ final class FindUser
                 $response['gender']
             );
 
-        }else{
+        } else {
 
             $user = $this->repository->findUser($uuidUser);
 

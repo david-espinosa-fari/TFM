@@ -20,12 +20,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class UpdateCacheWorkerCommand extends Command
 {
-    private $io;
     protected static $defaultName = 'updateCacheWorker';
+    private $io;
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        try{
+        try {
 
             $this->io = new SymfonyStyle($input, $output);
             $stationRepository = new StationRepositoryMysql($_SERVER['HOST_WORKER_MYSQL']);
@@ -43,23 +43,19 @@ class UpdateCacheWorkerCommand extends Command
 
             $allStations = $findAllStations->findWithOutCache(true);
 
-            if (is_array($allStations))
-            {
+            if (is_array($allStations)) {
                 $this->io->success('Recreated cache!');
             }
 
-        $this->listenerEventForUpdateCache($cacheData);
+            $this->listenerEventForUpdateCache($cacheData);
 
 
-        }catch (RedisConectionErrorException $e)
-        {
-            $this->io->success('Error Redis Conection '.$e->getMessage().' '.$e->getCode());
-        }catch (StationErrorException $e)
-        {
-            $this->io->success('Error '.$e->getMessage().' '.$e->getCode());
-        }catch(RemoteStationsNotFound $e)
-        {
-            $this->io->success('Error '.$e->getMessage().' '.$e->getCode());
+        } catch (RedisConectionErrorException $e) {
+            $this->io->success('Error Redis Conection ' . $e->getMessage() . ' ' . $e->getCode());
+        } catch (StationErrorException $e) {
+            $this->io->success('Error ' . $e->getMessage() . ' ' . $e->getCode());
+        } catch (RemoteStationsNotFound $e) {
+            $this->io->success('Error ' . $e->getMessage() . ' ' . $e->getCode());
         }
 
     }
@@ -77,19 +73,18 @@ class UpdateCacheWorkerCommand extends Command
 
         $channel->queue_bind($queue_name, 'onUpdate');
 
-        $this->io->success( " [*] Waiting for Events called onUpdate. To exit Consumer press CTRL+C\n");
+        $this->io->success(" [*] Waiting for Events called onUpdate. To exit Consumer press CTRL+C\n");
 
         $callback = static function ($msg) use ($cacheData) {
 
             $message = json_decode($msg->body, true);
-            $cacheData->insert($message['uuidStation'],$message);
+            $cacheData->insert($message['uuidStation'], $message);
 
         };
 
         $channel->basic_consume($queue_name, '', false, true, false, false, $callback);
 
-        while (count($channel->callbacks))
-        {
+        while (count($channel->callbacks)) {
             $channel->wait();
         }
 

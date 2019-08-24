@@ -12,10 +12,22 @@ use App\Domain\StationRemoteRepository;
 use App\Domain\StationRepository;
 use App\Domain\TailMessageRepository;
 
-class FindStationByPostalCode
+final class FindStationByPostalCode
 {
     private const CACHE_LOCAL_VALUE = 'local';
     private const CACHE_REMOTE_VALUE = 'remote';
+    /**
+     * @var StationRepository
+     */
+    private $repository;
+    /**
+     * @var StationRemoteRepository
+     */
+    private $remoteRepository;
+    /**
+     * @var CacheDataRepository
+     */
+    private $cache;
 
     public function __construct
     (
@@ -47,6 +59,22 @@ class FindStationByPostalCode
         return $allStations;
     }
 
+    private function findLocalStations($postalCode): array
+    {
+        $query = self::CACHE_LOCAL_VALUE . $postalCode;
+
+        $response = $this->cache->find($query);
+
+        if (!empty($response) && is_array($response)) {
+            return $this->convertArrayToStandardResponse($response);
+        }
+
+        $localStations = $this->repository->findStationsByPostalCode($postalCode);
+        $this->updateCache($query, $localStations);
+        return $localStations;
+
+    }
+
     private function convertArrayToStandardResponse(array $response): array
     {
         $stations = [];
@@ -75,22 +103,6 @@ class FindStationByPostalCode
 
         }
         return $stations;
-    }
-
-    private function findLocalStations($postalCode): array
-    {
-        $query = self::CACHE_LOCAL_VALUE . $postalCode;
-
-        $response = $this->cache->find($query);
-
-        if (!empty($response) && is_array($response)) {
-            return $this->convertArrayToStandardResponse($response);
-        }
-
-        $localStations = $this->repository->findStationsByPostalCode($postalCode);
-        $this->updateCache($query, $localStations);
-        return $localStations;
-
     }
 
     private function updateCache(string $key, array $stations): void

@@ -7,7 +7,7 @@ namespace App\Aplication\Station;
 use App\Domain\StationRemoteRepository;
 use App\Domain\StationRepository;
 
-class FindRemotePredictionStations
+final class FindRemotePredictionStations
 {
     /**
      * @var StationRemoteRepository
@@ -27,15 +27,15 @@ class FindRemotePredictionStations
         $this->localRepository = $localRepository;
     }
 
-    public function findPredictionsBy($locationCode):array
-    {
-        return $this->remoteRepository->findPredictionsByLocationCode($locationCode);
-    }
-
-    public function findPredictionsByPostalCode($postalCode):array
+    public function findPredictionsByPostalCode($postalCode): array
     {
         $locationCode = $this->localRepository->findLocationCode($postalCode);
         return $this->findPredictionsBy($locationCode);
+    }
+
+    public function findPredictionsBy($locationCode): array
+    {
+        return $this->remoteRepository->findPredictionsByLocationCode($locationCode);
     }
 
 }

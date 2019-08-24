@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Aplication\Station\FindRemotePredictionStations;
 use App\Domain\Error\ApiConectionError;
-use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\StationErrorException;
 use App\Infraestructure\StationRemoteRepositoryApi;
 use App\Infraestructure\StationRepositoryMysql;
@@ -19,7 +18,7 @@ final class GetPredictionsController extends AbstractController
      * @param $postalCode
      * @return JsonResponse
      */
-    public function index($postalCode):JsonResponse
+    public function index($postalCode): JsonResponse
     {
         $stations = [];
 
@@ -31,7 +30,7 @@ final class GetPredictionsController extends AbstractController
             try {
                 $stationPredictions = $predictions->findPredictionsByPostalCode($postalCode);
             } catch (ApiConectionError $exception) {
-                if ($_SERVER['ENV']==='env'){
+                if ($_SERVER['ENV'] === 'env') {
                     throw new StationErrorException($exception->getMessage(), 404);
                 }
                 throw new StationErrorException('Error conecting to remote services', 500);

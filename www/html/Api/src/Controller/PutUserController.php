@@ -22,39 +22,32 @@ final class PutUserController extends AbstractController
      * @return JsonResponse
      * @throws RedisConectionErrorException
      */
-    public function index($uuidUser, Request $request):JsonResponse
+    public function index($uuidUser, Request $request): JsonResponse
     {
 
-        try
-        {
+        try {
             $userRepository = new UserRepositoryMysql();
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
-            $findUser = new FindUser($userRepository,$cacheData);
+            $findUser = new FindUser($userRepository, $cacheData);
             $user = $findUser($uuidUser);
 
-            if ($name = $request->get('name'))
-            {
+            if ($name = $request->get('name')) {
                 $user->setName($name);
             }
-            if ($lastname = $request->get('lastname'))
-            {
+            if ($lastname = $request->get('lastname')) {
                 $user->setLastname($lastname);
             }
-            if ($password = $request->get('password'))
-            {
+            if ($password = $request->get('password')) {
                 $user->setPassword($password);
             }
-            if ($userName = $request->get('userName'))
-            {
+            if ($userName = $request->get('userName')) {
                 $user->setUserName($userName);
             }
-            if ($age = $request->get('age'))
-            {
+            if ($age = $request->get('age')) {
                 $user->setAge($age);
             }
-            if ($gender = $request->get('gender'))
-            {
+            if ($gender = $request->get('gender')) {
                 $user->setGender($gender);
             }
 
@@ -67,16 +60,14 @@ final class PutUserController extends AbstractController
                 200,
                 array(
                     'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
+                    'User-Agent' => 'MeteoSalleMiddel',
                 ));
 
-        }
-        catch (UserErrorException $e)
-        {
+        } catch (UserErrorException $e) {
             $jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
                 array(
                     'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
+                    'User-Agent' => 'MeteoSalleMiddel',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

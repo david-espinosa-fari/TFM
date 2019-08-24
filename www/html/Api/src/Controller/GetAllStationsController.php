@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Aplication\Station\FindAllLocalStation;
 use App\Aplication\Station\FindAllStations;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\StationErrorException;
@@ -19,52 +18,48 @@ final class GetAllStationsController extends AbstractController
     /**
      * @Route("/apiv1/stations/", name="get_all_stations", methods={"GET"})
      */
-	public function index():JsonResponse
-	{
+    public function index(): JsonResponse
+    {
 
-		try{
-			$stations=[];
-			$stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
-			try{
+        try {
+            $stations = [];
+            $stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
+            try {
                 $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
-            }catch (RedisConectionErrorException $e){
-			    throw new StationErrorException($e->getMessage(),$e->getCode());
+            } catch (RedisConectionErrorException $e) {
+                throw new StationErrorException($e->getMessage(), $e->getCode());
             }
             $remoteRepository = new StationRemoteRepositoryApi();
             $tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
 
-			$findAllStations = new FindAllStations($stationRepository,$remoteRepository,$cacheData,$tails);
-			$allStations = $findAllStations();
+            $findAllStations = new FindAllStations($stationRepository, $remoteRepository, $cacheData, $tails);
+            $allStations = $findAllStations();
 
-			//var_dump($allStations);
-			$count = count($allStations);
+            $count = count($allStations);
 
-			for ($i=0;$i<$count;$i++)
-			{
+            for ($i = 0; $i < $count; $i++) {
 
-				$station = $allStations[$i]->getStationLikearray();
+                $station = $allStations[$i]->getStationLikearray();
 
-				$stations[]=$station;
-			}
-			$jsonResponse = new JsonResponse($stations,200,
-				array(
-					'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
-				));
+                $stations[] = $station;
+            }
+            $jsonResponse = new JsonResponse($stations, 200,
+                array(
+                    'Content-Type' => 'application/json',
+                    'User-Agent' => 'MeteoSalleMiddel',
+                ));
 
-			$jsonResponse->setEncodingOptions(400);
-			return $jsonResponse;
-		}
-		catch (StationErrorException $e)
-		{
-			$jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
-				array(
-					'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
-				));
+            $jsonResponse->setEncodingOptions(400);
+            return $jsonResponse;
+        } catch (StationErrorException $e) {
+            $jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
+                array(
+                    'Content-Type' => 'application/json',
+                    'User-Agent' => 'MeteoSalleMiddel',
+                ));
 
-			$jsonResponse->setEncodingOptions(400);
-			return $jsonResponse;
-		}
-	}
+            $jsonResponse->setEncodingOptions(400);
+            return $jsonResponse;
+        }
+    }
 }

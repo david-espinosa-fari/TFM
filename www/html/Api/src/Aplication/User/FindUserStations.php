@@ -38,55 +38,26 @@ class FindUserStations
         $this->stationRepository = $stationRepository;
     }
 
-    public function __invoke($uuidUser):array
+    public function __invoke($uuidUser): array
     {
-        $queryCache = self::VALUE_CACHE.$uuidUser;
+        $queryCache = self::VALUE_CACHE . $uuidUser;
 
         $response = $this->cacheDataRepository->find($queryCache);
 
-        if (!empty($response))
-        {
+        if (!empty($response)) {
             return $this->convertArrayToStandardResponse($response);
         }
 
-        return $this->findWithoutCache($uuidUser,$queryCache);
+        return $this->findWithoutCache($uuidUser, $queryCache);
 
     }
 
-    public function findWithoutCache($uuidUser,$queryCache):array
+    private function convertArrayToStandardResponse(array $response): array
     {
-        $stations = $this->stationRepository->findUserStations($uuidUser);
-
-        $count = count($stations);
-        for ($i=0;$i<$count;$i++)
-        {
-            if (!empty($stations[$i]))
-            {
-                $stationCache = $stations[$i]->getStationLikeArray();
-
-                $event = new OnUpdateStation($stations[$i]);
-                $this->tailsRepository->publishEvent($event);
-
-                $allStationsCache[] = $stationCache;
-            }
-        }
-
-        if (!empty($allStationsCache))
-        {
-            $this->cacheDataRepository->insert($queryCache, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
-        }
-
-        return $stations;
-    }
-
-    private function convertArrayToStandardResponse(array $response):array
-    {
-        $stations=[];
+        $stations = [];
         $count = count($response);
-        for ($i=0;$i<$count;$i++)
-        {
-            if (!empty($response[$i]))
-            {
+        for ($i = 0; $i < $count; $i++) {
+            if (!empty($response[$i])) {
                 $station = new Station
                 (
                     $response[$i]['uuidStation'],
@@ -107,6 +78,29 @@ class FindUserStations
             }
 
         }
+        return $stations;
+    }
+
+    public function findWithoutCache($uuidUser, $queryCache): array
+    {
+        $stations = $this->stationRepository->findUserStations($uuidUser);
+
+        $count = count($stations);
+        for ($i = 0; $i < $count; $i++) {
+            if (!empty($stations[$i])) {
+                $stationCache = $stations[$i]->getStationLikeArray();
+
+                $event = new OnUpdateStation($stations[$i]);
+                $this->tailsRepository->publishEvent($event);
+
+                $allStationsCache[] = $stationCache;
+            }
+        }
+
+        if (!empty($allStationsCache)) {
+            $this->cacheDataRepository->insert($queryCache, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
+        }
+
         return $stations;
     }
 }

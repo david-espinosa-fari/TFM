@@ -5,7 +5,7 @@ namespace App\Domain\Error;
 
 use \Exception;
 
-class LocationCodeError extends Exception
+final class LocationCodeError extends Exception
 {
 
     private const MESSAGE = 'Location code not found';

@@ -21,6 +21,7 @@ final class StationRepositoryMysql implements StationRepository
     /**
      * StationRepository constructor.
      * @param $host
+     * @throws StationErrorException
      */
 
     public function __construct(string $host)
@@ -28,7 +29,6 @@ final class StationRepositoryMysql implements StationRepository
 
         try {
             $this->conect = new PDO(
-            //"mysql:host=localhost;dbname={$_SERVER['DB_MYSQL']}",
                 "mysql:host=$host;dbname={$_SERVER['DB_MYSQL']}",
                 $_SERVER['USER_MYSQL'],
                 $_SERVER['PASS_MYSQL']
@@ -36,8 +36,6 @@ final class StationRepositoryMysql implements StationRepository
 
         } catch (PDOException $exception) {
             throw new StationErrorException('Internal Server error', 500);
-            //$stationErrorResponse->setMoreInfo($exception);
-            //throw $stationErrorResponse;
         }
     }
 
@@ -106,7 +104,7 @@ final class StationRepositoryMysql implements StationRepository
                 $response['humidity'],
                 $response['presion'],
                 $response['location'],
-                $response['state']//esto es para el nuevo campo abria que agregarlo en las conversiones de redis
+                $response['state']
             );
             $station->setTimestamp($response['timestamp']);
             $station->setHistoric($this->findHistorycStation($uuidStation));
@@ -179,7 +177,7 @@ final class StationRepositoryMysql implements StationRepository
         $stmt = $this->conect->prepare($query);
         $stmt->bindParam(1, $uuidStation);
         $stmt->execute();
-        $response = $stmt->fetchAll(PDO::FETCH_ASSOC);// lo tomo-all para que sea mas rapida la consulta
+        $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $count = count($response);
         for ($i = 0; $i < $count; $i++) {

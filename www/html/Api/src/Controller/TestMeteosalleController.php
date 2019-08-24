@@ -13,11 +13,11 @@ final class TestMeteosalleController extends AbstractController
      */
     public function index()
     {
-		return new JsonResponse(
-			['message' => 'Success, the api status is up!!!'], 200,
-			array(
-				'Content-Type' => 'application/json',
-                'User-Agent'=>'MeteoSalleMiddel',
-			));
+        return new JsonResponse(
+            ['message' => 'Success, the api status is up!!!'], 200,
+            array(
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'MeteoSalleMiddel',
+            ));
     }
 }

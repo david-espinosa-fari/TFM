@@ -22,12 +22,11 @@ final class DeleteUserController extends AbstractController
     public function index($uuidUser)
     {
 
-        try
-        {
+        try {
             $userRepository = new UserRepositoryMysql();
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
-            $delete = new DeleteUser($userRepository,$cacheData);
+            $delete = new DeleteUser($userRepository, $cacheData);
             $delete($uuidUser);
 
             return new JsonResponse(
@@ -35,16 +34,14 @@ final class DeleteUserController extends AbstractController
                 200,
                 array(
                     'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
+                    'User-Agent' => 'MeteoSalleMiddel',
                 ));
 
-        }
-        catch (UserErrorException $e)
-        {
+        } catch (UserErrorException $e) {
             $jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
                 array(
                     'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
+                    'User-Agent' => 'MeteoSalleMiddel',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

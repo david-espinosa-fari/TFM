@@ -30,6 +30,6 @@ final class DeleteUser
         $query = md5($uuidUser);
         $this->repository->deleteUser($uuidUser);
 
-        $this->cacheDataRepository->insert($query,[''],0);
+        $this->cacheDataRepository->insert($query, [''], 0);
     }
 }

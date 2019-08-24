@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Aplication\Station\FindAllStations;
 use App\Aplication\Station\FindStationByPostalCode;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\StationErrorException;
@@ -14,55 +13,53 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class GetStationsByPostalCodeController extends AbstractController
+final class GetStationsByPostalCodeController extends AbstractController
 {
     /**
      * @Route("/apiv1/stations/postalcode/{postalCode}", name="get_stations_by_postal_code", methods={"GET"})
+     * @param $postalCode
+     * @return JsonResponse
      */
-    public function index($postalCode)
+    public function index($postalCode): ?JsonResponse
     {
 
 
-        try{
-            $stations=[];
+        try {
+            $stations = [];
             $stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
-            try{
+            try {
                 $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
-            }catch (RedisConectionErrorException $e){
-                throw new StationErrorException($e->getMessage(),$e->getCode());
+            } catch (RedisConectionErrorException $e) {
+                throw new StationErrorException($e->getMessage(), $e->getCode());
             }
             $remoteRepository = new StationRemoteRepositoryApi();
             $tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
 
-            $findStationsByPostalCode = new FindStationByPostalCode($stationRepository,$remoteRepository,$cacheData);
+            $findStationsByPostalCode = new FindStationByPostalCode($stationRepository, $remoteRepository, $cacheData);
             $allStations = $findStationsByPostalCode($postalCode);
 
-            //var_dump($allStations);
             $count = count($allStations);
 
-            for ($i=0;$i<$count;$i++)
-            {
+            for ($i = 0; $i < $count; $i++) {
 
                 $allStations[$i]->setPostalCode($postalCode);
                 $station = $allStations[$i]->getStationLikearray();
 
-                $stations[]=$station;
+                $stations[] = $station;
             }
-            $jsonResponse = new JsonResponse($stations,200,
+            $jsonResponse = new JsonResponse($stations, 200,
                 array(
                     'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
+                    'User-Agent' => 'MeteoSalleMiddel',
                 ));
 
             $jsonResponse->setEncodingOptions(400);
             return $jsonResponse;
-        }
-        catch (StationErrorException $e)
-        {
+        } catch (StationErrorException $e) {
             $jsonResponse = new JsonResponse(['Message' => $e->getMessage()], $e->getCode(),
                 array(
                     'Content-Type' => 'application/json',
-                    'User-Agent'=>'MeteoSalleMiddel',
+                    'User-Agent' => 'MeteoSalleMiddel',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

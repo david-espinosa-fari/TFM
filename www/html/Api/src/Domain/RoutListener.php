@@ -19,35 +19,35 @@ class RoutListener
         $exception = $event->getException();
         if ($exception instanceof HttpException)//esta es la excepcion de rout not found
         {
-         /*$message = sprintf(
-            'My Error says: %s with code: %s',
-            $exception->getMessage(),
-            $exception->getCode()
-        );*/
-        // Customize your response object to display the exception details
-        //$response = new Response();
+            /*$message = sprintf(
+               'My Error says: %s with code: %s',
+               $exception->getMessage(),
+               $exception->getCode()
+           );*/
+            // Customize your response object to display the exception details
+            //$response = new Response();
             $response = Response::create(
-                'Message: '.$exception->getMessage(),404
+                'Message: ' . $exception->getMessage(), 404
             );
 
-        //$response->setContent($message);
+            //$response->setContent($message);
 
-        // HttpExceptionInterface is a special type of exception that
-        // holds status code and header details
-        if ($exception instanceof HttpExceptionInterface) {
+            // HttpExceptionInterface is a special type of exception that
+            // holds status code and header details
+            if ($exception instanceof HttpExceptionInterface) {
 
-            $response->setStatusCode($exception->getStatusCode());
-            $response->headers->replace(
-                array(
-                'Content-Type' => 'application/json',
-                'User-Agent'=>'MeteoSalleMiddel'
-            ));
-        } else {
-            $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+                $response->setStatusCode($exception->getStatusCode());
+                $response->headers->replace(
+                    array(
+                        'Content-Type' => 'application/json',
+                        'User-Agent' => 'MeteoSalleMiddel'
+                    ));
+            } else {
+                $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
 
-        // sends the modified response object to the event
-        $event->setResponse($response);
+            // sends the modified response object to the event
+            $event->setResponse($response);
         }
     }
 }
