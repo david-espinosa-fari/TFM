@@ -13,14 +13,14 @@ final class StationHistory
 	private $presion;
 	private $timestamp;
 
-	private function __construct($uuidStation, $temp, $humidity, $presion, $timestamp)
+	private function __construct($uuidStation, $temp, $humidity, $presion/*, $timestamp*/)
 	{
 
 		$this->uuidStation = $uuidStation;
 		$this->temp = $temp;
 		$this->humidity = $humidity;
 		$this->presion = $presion;
-		$this->timestamp = $timestamp;
+		//$this->timestamp = $timestamp;
 	}
 	public function getStationHostoryLikeArray():array
 	{
@@ -37,7 +37,6 @@ final class StationHistory
 		$data['temp'] = $request->get('temp');
 		$data['humidity'] = $request->get('humidity');
 		$data['presion'] = $request->get('presion');
-		$data['timestamp'] = $request->get('timestamp');
 
 		foreach ($data as $datafield => $value)
 		{
@@ -51,16 +50,15 @@ final class StationHistory
 			$data['uuidStation'],
 			$data['temp'],
 			$data['humidity'],
-			$data['presion'],
-			$data['timestamp']
+			$data['presion']
 		);
 	}
 	/**
 	 * @return mixed
 	 */
-	public function getTemp()
+	public function getTemp():float
 	{
-		return $this->temp;
+		return (float)$this->temp;
 	}
 
 	/**
@@ -74,9 +72,9 @@ final class StationHistory
 	/**
 	 * @return mixed
 	 */
-	public function getHumidity()
+	public function getHumidity():float
 	{
-		return $this->humidity;
+		return (float)$this->humidity;
 	}
 
 	/**
@@ -90,9 +88,9 @@ final class StationHistory
 	/**
 	 * @return mixed
 	 */
-	public function getPresion()
+	public function getPresion():float
 	{
-		return $this->presion;
+		return (float)$this->presion;
 	}
 
 	/**
@@ -108,7 +106,8 @@ final class StationHistory
 	 */
 	public function getTimestamp()
 	{
-		return date("Y-m-d H:i:s", strtotime($this->timestamp));
+		//return date("Y-m-d H:i:s", strtotime($this->timestamp));
+		return $this->timestamp;
 	}
 
 	/**

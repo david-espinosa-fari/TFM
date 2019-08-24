@@ -16,73 +16,11 @@ final class Station
 	private $humidity;
     private $state;
 
-    /**
-	 * @param mixed $uuidUser
-	 */
-	public function setUuidUser($uuidUser): void
-	{
-		$this->uuidUser = $uuidUser;
-	}
-
-	/**
-	 * @param mixed $latitud
-	 */
-	public function setLatitud($latitud): void
-	{
-		$this->latitud = $latitud;
-	}
-
-	/**
-	 * @param mixed $longitud
-	 */
-	public function setLongitud($longitud): void
-	{
-		$this->longitud = $longitud;
-	}
-
-	/**
-	 * @param mixed $postalCode
-	 */
-	public function setPostalCode($postalCode): void
-	{
-		$this->postalCode = $postalCode;
-	}
-
-	/**
-	 * @param mixed $temp
-	 */
-	public function setTemp($temp): void
-	{
-		$this->temp = $temp;
-	}
-
-	/**
-	 * @param mixed $humidity
-	 */
-	public function setHumidity($humidity): void
-	{
-		$this->humidity = $humidity;
-	}
-
-	/**
-	 * @param mixed $presion
-	 */
-	public function setPresion($presion): void
-	{
-		$this->presion = $presion;
-	}
-
-	/**
-	 * @param mixed $location
-	 */
-	public function setLocation($location): void
-	{
-		$this->location = $location;
-	}
-	private $presion;
-	private $location;
-	private $historic;
-	private $predictions;
+    private $presion;
+    private $location;
+    private $historic;
+    private $predictions;
+    private $timestamp;
 
 	public function __construct(
 			$uuidStation,
@@ -108,22 +46,7 @@ final class Station
 		$this->presion = $presion;
 		$this->location = $location;
         $this->state = $state;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * @param mixed $state
-     */
-    public function setState($state): void
-    {
-        $this->state = $state;
+        $this->timestamp = time();
     }
 
 	public function __toString()
@@ -172,7 +95,72 @@ final class Station
 		return get_object_vars($this);
 	}
 
-	/**
+
+    /**
+     * @param mixed $uuidUser
+     */
+    public function setUuidUser($uuidUser): void
+    {
+        $this->uuidUser = $uuidUser;
+    }
+
+    /**
+     * @param mixed $latitud
+     */
+    public function setLatitud($latitud): void
+    {
+        $this->latitud = $latitud;
+    }
+
+    /**
+     * @param mixed $longitud
+     */
+    public function setLongitud($longitud): void
+    {
+        $this->longitud = $longitud;
+    }
+
+    /**
+     * @param mixed $postalCode
+     */
+    public function setPostalCode($postalCode): void
+    {
+        $this->postalCode = $postalCode;
+    }
+
+    /**
+     * @param mixed $temp
+     */
+    public function setTemp($temp): void
+    {
+        $this->temp = $temp;
+    }
+
+    /**
+     * @param mixed $humidity
+     */
+    public function setHumidity($humidity): void
+    {
+        $this->humidity = $humidity;
+    }
+
+    /**
+     * @param mixed $presion
+     */
+    public function setPresion($presion): void
+    {
+        $this->presion = $presion;
+    }
+
+    /**
+     * @param mixed $location
+     */
+    public function setLocation($location): void
+    {
+        $this->location = $location;
+    }
+
+    /**
 	 * @return mixed
 	 */
 	public function getUuidUser():string
@@ -251,5 +239,43 @@ final class Station
 	{
 		$this->predictions = $prediccions;
 	}
+
+    /**
+     * @return mixed
+     */
+    public function getTimestamp()
+    {
+        return $this->timestamp;
+    }
+
+    /**
+     * @param mixed $timestamp
+     */
+    public function setTimestamp($timestamp): void
+    {
+        if (strtotime($timestamp)===false)
+        {
+            $this->timestamp = $timestamp;
+        }else{
+
+            $this->timestamp = strtotime($timestamp);
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param mixed $state
+     */
+    public function setState($state): void
+    {
+        $this->state = $state;
+    }
 
 }
