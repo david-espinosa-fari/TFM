@@ -1,0 +1,127 @@
+<?php
+
+
+namespace App\Aplication\Station;
+
+
+use App\Domain\CacheDataRepository;
+use App\Domain\Error\ApiConectionError;
+use App\Domain\Error\RemoteStationsNotFound;
+use App\Domain\Station;
+use App\Domain\StationRemoteRepository;
+use App\Domain\StationRepository;
+use App\Domain\TailMessageRepository;
+
+class FindStationByPostalCode
+{
+    private const CACHE_LOCAL_VALUE = 'local';
+    private const CACHE_REMOTE_VALUE = 'remote';
+
+    public function __construct
+    (
+        StationRepository $repository,
+        StationRemoteRepository $remoteRepository,
+        CacheDataRepository $cache
+    )
+    {
+        $this->repository = $repository;
+        $this->remoteRepository = $remoteRepository;
+        $this->cache = $cache;
+    }
+
+    public function __invoke($postalCode): array
+    {
+        try {
+            $localStations = $this->findLocalStations($postalCode);
+
+            $locationCode = $this->repository->findLocationCode($postalCode);
+            $remoteStations = $this->findRemoteStations($locationCode);
+
+            $allStations = array_merge($localStations, $remoteStations);
+
+        } catch (RemoteStationsNotFound $exception) {
+            $allStations = $localStations;
+        } catch (ApiConectionError $exception) {
+            $allStations = $localStations;
+        }
+        return $allStations;
+    }
+
+    private function convertArrayToStandardResponse(array $response): array
+    {
+        $stations = [];
+        $count = count($response);
+        for ($i = 0; $i < $count; $i++) {
+            if (!empty($response[$i])) {
+                $station = new Station
+                (
+                    $response[$i]['uuidStation'],
+                    $response[$i]['uuidUser'],
+                    $response[$i]['latitud'],
+                    $response[$i]['longitud'],
+                    $response[$i]['postalCode'],
+                    $response[$i]['temp'],
+                    $response[$i]['humidity'],
+                    $response[$i]['presion'],
+                    $response[$i]['location'],
+                    $response[$i]['state']
+                );
+                $station->setTimestamp($response[$i]['timestamp']);
+                $station->setHistoric($response[$i]['historic']);
+                $station->setPredictions($response[$i]['predictions']);
+
+                $stations[] = $station;
+            }
+
+        }
+        return $stations;
+    }
+
+    private function findLocalStations($postalCode): array
+    {
+        $query = self::CACHE_LOCAL_VALUE . $postalCode;
+
+        $response = $this->cache->find($query);
+
+        if (!empty($response) && is_array($response)) {
+            return $this->convertArrayToStandardResponse($response);
+        }
+
+        $localStations = $this->repository->findStationsByPostalCode($postalCode);
+        $this->updateCache($query, $localStations);
+        return $localStations;
+
+    }
+
+    private function updateCache(string $key, array $stations): void
+    {
+        if (!empty($stations) && is_array($stations)) {
+            $count = count($stations);
+            for ($i = 0; $i < $count; $i++) {
+                if (!empty($stations[$i])) {
+                    $stationCache = $stations[$i]->getStationLikeArray();
+
+                    $allStationsCache[] = $stationCache;
+                }
+            }
+            $this->cache->insert($key, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
+        }
+    }
+
+    private function findRemoteStations($locationCode): array
+    {
+        $query = self::CACHE_REMOTE_VALUE . $locationCode;
+
+        $response = $this->cache->find($query);
+
+        if (!empty($response) && is_array($response)) {
+            return $this->convertArrayToStandardResponse($response);
+        }
+
+        $remoteStations = $this->remoteRepository->findStationsByLocationCode($locationCode);
+        $this->updateCache($query, $remoteStations);
+        return $remoteStations;
+    }
+
+
+}

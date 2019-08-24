@@ -9,4 +9,6 @@ interface StationRemoteRepository
     public function findPredictionsByLocationCode($locationCode);
 
     public function findAllStation():array;
+
+    public function findStationsByLocationCode($locationCode):array;
 }

@@ -20,4 +20,6 @@ interface StationRepository
 
     public function findUserStations($uuidUser):array;
 
+    public function findStationsByPostalCode($postalCode):array;
+
 }
