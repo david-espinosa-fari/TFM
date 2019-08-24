@@ -25,11 +25,9 @@ final class FindUser
         $this->cacheDataRepository = $cacheDataRepository;
     }
 
-    public function __invoke($uuidUser)
+    public function __invoke($uuidUser):user
     {
-        $query = md5($uuidUser);
-
-        $response = $this->cacheDataRepository->find($query);
+        $response = $this->cacheDataRepository->find($uuidUser);
         if (!empty($response))
         {
             $user = new User
@@ -47,7 +45,7 @@ final class FindUser
 
             $user = $this->repository->findUser($uuidUser);
 
-            $this->cacheDataRepository->insert($query, $user->getUserLikeArray(), 10);
+            $this->cacheDataRepository->insert($uuidUser, $user->getUserLikeArray(), $_SERVER['TIME_TO_LIVE_CACHE']);
         }
         return $user;
     }
