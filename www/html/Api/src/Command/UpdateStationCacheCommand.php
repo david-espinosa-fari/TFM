@@ -27,19 +27,11 @@ class UpdateStationCacheCommand extends Command
 
     protected static $defaultName = 'UpdateStationCache';
 
-    protected function configure()
-    {
-        $this
-            ->setDescription('Add a short description for your command')
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'How many hours before update? default 4 ',self::TIME_TO_UPDATE)
-        ;
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
 
-        $argument = $input->getArgument('arg1');
+        $argument = 0;
         if (!empty($argument))
         {
             $this->updateEvery = $argument;
@@ -47,25 +39,8 @@ class UpdateStationCacheCommand extends Command
             $this->updateEvery = self::TIME_TO_UPDATE;
         }
 
-        if ($this->updateEvery) {
-            $this->io->note(sprintf('Every this hours will be cache refresh: %s', $this->updateEvery));
-        }
-
-
-        while ($this->timeJobs())
-        {
-            $this->io->success('Recreating Stations cache');
-
-        }
-
-    }
-
-    private function timeJobs():bool
-    {
+        $this->io->success('Recreating Stations cache');
         $this->recreateCache();
-        sleep((60*60)*$this->updateEvery);
-
-        return true;
 
     }
 

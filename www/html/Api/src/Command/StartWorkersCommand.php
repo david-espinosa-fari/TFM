@@ -16,14 +16,13 @@ class StartWorkersCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $arrayOfConsumers = ['stationEventListenerWorker','UpdateStationCache' ];
+        $arrayOfConsumers = ['UpdateStationCache','stationEventListenerWorker' ];
 
         $count = count($arrayOfConsumers);
 
         for ($i = 0; $i < $count; $i++)
         {
-           // shell_exec('nohup ' . "start php bin/console " . $arrayOfConsumers[$i]);
-            echo shell_exec("nohup php bin/console " . $arrayOfConsumers[$i]);
+           echo shell_exec('nohup ' . "start php bin/console " . $arrayOfConsumers[$i]);
         }
 
     }
