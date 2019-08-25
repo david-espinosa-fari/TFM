@@ -27,6 +27,7 @@
         "preferred-install": {
             "*": "dist"
         },
+        "optimize-autoloader": true,
         "sort-packages": true
     },
     "autoload": {
@@ -50,7 +51,8 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "startWorkers": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"
