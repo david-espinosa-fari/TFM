@@ -4,6 +4,8 @@
 namespace App\Aplication\Station;
 
 
+use App\Domain\Error\LocationCodeError;
+use App\Domain\StationErrorException;
 use App\Domain\StationRemoteRepository;
 use App\Domain\StationRepository;
 
@@ -29,8 +31,13 @@ final class FindRemotePredictionStations
 
     public function findPredictionsByPostalCode($postalCode): array
     {
-        $locationCode = $this->localRepository->findLocationCode($postalCode);
-        return $this->findPredictionsBy($locationCode);
+        try{
+            $locationCode = $this->localRepository->findLocationCode($postalCode);
+            return $this->findPredictionsBy($locationCode);
+
+        }catch (LocationCodeError $locationCodeError) {
+            throw new StationErrorException($locationCodeError->getMessage(),$locationCodeError->getCode());
+        }
     }
 
     public function findPredictionsBy($locationCode): array
