@@ -137,13 +137,19 @@ final class StationRepositoryMysql implements StationRepository
 
     }
 
-    public function findPredictionsStation($postalCode)
+    public function findPredictionsStation($postalCode): ?array
     {
         try {
             $apiRepository = new StationRemoteRepositoryApi();
             $findPredictions = new FindRemotePredictionStations($apiRepository, $this);
+            $predictions = [];
+            $prediction = $findPredictions->findPredictionsByPostalCode($postalCode);
+            $count = count($prediction);
+            for ($i = 0; $i < $count; $i++) {
+                $predictions[] = $prediction[$i]->getStationLikeArray();
+            }
 
-            return $findPredictions->findPredictionsByPostalCode($postalCode);
+            return $predictions;
 
         } catch (LocationCodeError $e) {
         }
@@ -157,14 +163,13 @@ final class StationRepositoryMysql implements StationRepository
 
         $stmt = $this->conect->prepare($query);
         $stmt->bindParam(1, $postalCode);
-
         if ($stmt->execute()) {
             $response = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!empty($response)) {
                 return $response['locationCode'];
             }
         }
-        throw new LocationCodeError();
+        throw new LocationCodeError('No location code found for this postal code', 404);
     }
 
     public function findAllStation(): array
@@ -196,7 +201,7 @@ final class StationRepositoryMysql implements StationRepository
                     $response[$i]['postalCode']
                 );
                 $station->setTimestamp($response[$i]['timestamp']);
-                $station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
+                //$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
                 //$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
 
                 $stations[] = $station;
@@ -305,7 +310,10 @@ final class StationRepositoryMysql implements StationRepository
                 );
                 $station->setTimestamp($response[$i]['timestamp']);
                 $station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
-                //$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
+                $station->setPredictions(
+                    $this->findPredictionsStation($response[$i]['postalCode'])
+                );
+
 
                 $stations[] = $station;
             }
@@ -349,7 +357,7 @@ final class StationRepositoryMysql implements StationRepository
                 );
                 $station->setTimestamp($response[$i]['timestamp']);
                 //$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
-                //$station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
+                // $station->setPredictions($this->findPredictionsStation($response[$i]['postalCode']));
 
                 $stations[] = $station;
             }
@@ -377,6 +385,6 @@ final class StationRepositoryMysql implements StationRepository
                 return $response['postalCode'];
             }
         }
-        throw new LocationCodeError();
+        throw new LocationCodeError('No postal code found for this location code', 404);
     }
 }
