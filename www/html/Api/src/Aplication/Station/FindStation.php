@@ -46,12 +46,12 @@ final class FindStation
                 $response['uuidUser'],
                 $response['latitud'],
                 $response['longitud'],
-                $response['postalCode'],
                 $response['temp'],
                 $response['humidity'],
                 $response['presion'],
                 $response['location'],
-                $response['state']
+                $response['state'],
+                $response['postalCode']
             );
             $station->setTimestamp($response['timestamp']);
             $station->setHistoric($response['historic']);

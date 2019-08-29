@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class GetUserStationsController extends AbstractController
+final class GetUserStationsController extends AbstractController
 {
     /**
      * @Route("/apiv1/user/{uuidUser}/stations", name="get_user_stations", methods={"GET"})
@@ -48,6 +48,8 @@ class GetUserStationsController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
+
                 ));
 
             $jsonResponse->setEncodingOptions(400);
@@ -57,6 +59,7 @@ class GetUserStationsController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

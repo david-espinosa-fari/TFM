@@ -6,6 +6,7 @@ namespace App\Infraestructure;
 
 use App\Domain\Error\ApiConectionError;
 use App\Domain\Error\RemoteStationsNotFound;
+use App\Domain\Service\FindPostalCodeByLocation;
 use App\Domain\Station;
 use App\Domain\StationRemoteRepository;
 use ErrorException;
@@ -19,8 +20,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 final class StationRemoteRepositoryApi implements StationRemoteRepository
 {
-
-    private const ADDRESS_API = 'http://192.168.1.38:9000/v1/';
+    private const ADDRESS_API = 'http://34.66.90.82:9000/v1/';
     private $httpClient;
 
     public function __construct()
@@ -49,9 +49,10 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
 
             if (200 !== $response->getStatusCode()) {
             }
-            $response = $response->getContent(false);
+            $response = $response->getContent(true);
+            $resp = $this->convertApiResponseToDomain($response);
 
-            return $this->convertApiResponseToDomain($response);
+            return $resp;
 
         } catch (TransportExceptionInterface $e) {
             throw new ApiConectionError('Transport Error ' . $e->getMessage(), $e->getCode());
@@ -66,42 +67,35 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
         }
     }
 
-    private function convertApiResponseToDomain(string $apiResponse): array
+    private function convertApiResponseToDomain(string $apiRes): array
     {
 
-        $apiResponse = json_decode($apiResponse, true);
+        $apiResponse = json_decode($apiRes, true);
+
         $stations = [];
 
-        if (is_array($apiResponse)) {
+        if (isset($apiResponse)) {
             $count = count($apiResponse);
-
             for ($i = 0; $i < $count; $i++) {
-                $uuidStation = utf8_encode($apiResponse[$i]['stationId']);
-                $uuidUser = utf8_encode($apiResponse[$i]['idApi']);
-                $latitud = utf8_encode($apiResponse[$i]['latitude']);
-                $longitud = utf8_encode($apiResponse[$i]['longitude']);
-                $postalCode = null; //$apiResponse[$i]['postalCode'];
-                $temp = utf8_encode($apiResponse[$i]['temperature']);
-                $humidity = utf8_encode($apiResponse[$i]['humidity']);
-                $presion = utf8_encode($apiResponse[$i]['pressure']);
-                $location = $apiResponse[$i]['location'];
-                $state = utf8_encode($apiResponse[$i]['state']);
-                $timestamp = $apiResponse[$i]['timeStamp'];
-                $station = new Station
-                (
-                    $uuidStation,
-                    $uuidUser,
-                    $latitud,
-                    $longitud,
-                    $postalCode,
-                    $temp,
-                    $humidity,
-                    $presion,
-                    $location,
-                    $state
-                );
-                $station->setTimestamp($timestamp);
+                $uuidStation = $apiResponse[$i]['stationId'];//
+                $location = $apiResponse[$i]['location'];//
+                $state = $apiResponse[$i]['state'];
+                $latitud = $apiResponse[$i]['latitude'];
+                $longitud = $apiResponse[$i]['longitude'];
+                $uuidUser = $apiResponse[$i]['idApi'];//
+                $temp = $apiResponse[$i]['temperature'];
+                $humidity = $apiResponse[$i]['humidity'];
+                $presion = $apiResponse[$i]['pressure'];
+                $localRepo = new FindPostalCodeByLocation(new StationRepositoryMysql($_SERVER['HOST_MYSQL']));
+                $postalCode = $localRepo($uuidStation);//$apiResponse[$i]['postalCode'];
+                $timeStamp = $apiResponse[$i]['timeStamp'] ?? time();
+
+
+                $station = new Station($uuidStation, $uuidUser, $latitud, $longitud, $temp, $humidity, $presion, $location, $state, $postalCode);
+                $station->setTimestamp($timeStamp);
+
                 $stations[] = $station;
+
             }
             return $stations;
         }
@@ -114,7 +108,7 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
     {
         try {
             $response = $this->httpClient->request(
-                'GET', self::ADDRESS_API . 'prediction/' . 8065,//$locationCode,
+                'GET', self::ADDRESS_API . 'prediction/' . $locationCode,
                 [
                     'buffer' => true
                 ]);
@@ -123,18 +117,7 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
             }
             $response = $response->getContent(false);
 
-            $formatedResponse = $this->convertApiResponseToDomain($response);
-            $count = count($formatedResponse);
-
-            for ($i = 0; $i < $count; $i++) {
-                if (!empty($formatedResponse[$i])) {
-                    $stationPrediction = $formatedResponse[$i]->getStationLikeArray();
-
-                    $allPredictions[] = $stationPrediction;
-                }
-            }
-
-            return $allPredictions;
+            return $this->convertApiResponseToDomain($response);
 
 
         } catch (TransportExceptionInterface $e) {
@@ -156,7 +139,7 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
 
         try {
             $response = $this->httpClient->request(
-                'GET', self::ADDRESS_API . 'station/' . 8065,//$locationCode,
+                'GET', self::ADDRESS_API . 'station/' . $locationCode,
                 [
                     'buffer' => true
                 ]);

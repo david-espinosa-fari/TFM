@@ -51,6 +51,8 @@ final class GetStationsByPostalCodeController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
+
                 ));
 
             $jsonResponse->setEncodingOptions(400);
@@ -60,6 +62,7 @@ final class GetStationsByPostalCodeController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

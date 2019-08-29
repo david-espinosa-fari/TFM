@@ -35,6 +35,7 @@ final class DeleteUserController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
                 ));
 
         } catch (UserErrorException $e) {
@@ -42,6 +43,8 @@ final class DeleteUserController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
+
                 ));
 
             $jsonResponse->setEncodingOptions(400);

@@ -61,6 +61,8 @@ final class PutUserController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
+
                 ));
 
         } catch (UserErrorException $e) {

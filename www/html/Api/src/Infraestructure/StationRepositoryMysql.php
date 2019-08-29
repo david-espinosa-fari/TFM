@@ -99,12 +99,12 @@ final class StationRepositoryMysql implements StationRepository
                 $response['uuidUser'],
                 $response['latitud'],
                 $response['longitud'],
-                $response['postalCode'],
                 $response['temp'],
                 $response['humidity'],
                 $response['presion'],
                 $response['location'],
-                $response['state']
+                $response['state'],
+                $response['postalCode']
             );
             $station->setTimestamp($response['timestamp']);
             $station->setHistoric($this->findHistorycStation($uuidStation));
@@ -188,12 +188,12 @@ final class StationRepositoryMysql implements StationRepository
                     $response[$i]['uuidUser'],
                     $response[$i]['latitud'],
                     $response[$i]['longitud'],
-                    $response[$i]['postalCode'],
                     $response[$i]['temp'],
                     $response[$i]['humidity'],
                     $response[$i]['presion'],
                     $response[$i]['location'],
-                    $response[$i]['state']
+                    $response[$i]['state'],
+                    $response[$i]['postalCode']
                 );
                 $station->setTimestamp($response[$i]['timestamp']);
                 $station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
@@ -296,12 +296,12 @@ final class StationRepositoryMysql implements StationRepository
                     $response[$i]['uuidUser'],
                     $response[$i]['latitud'],
                     $response[$i]['longitud'],
-                    $response[$i]['postalCode'],
                     $response[$i]['temp'],
                     $response[$i]['humidity'],
                     $response[$i]['presion'],
                     $response[$i]['location'],
-                    $response[$i]['state']
+                    $response[$i]['state'],
+                    $response[$i]['postalCode']
                 );
                 $station->setTimestamp($response[$i]['timestamp']);
                 $station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
@@ -340,12 +340,12 @@ final class StationRepositoryMysql implements StationRepository
                     $response[$i]['uuidUser'],
                     $response[$i]['latitud'],
                     $response[$i]['longitud'],
-                    $response[$i]['postalCode'],
                     $response[$i]['temp'],
                     $response[$i]['humidity'],
                     $response[$i]['presion'],
                     $response[$i]['location'],
-                    $response[$i]['state']
+                    $response[$i]['state'],
+                    $response[$i]['postalCode']
                 );
                 $station->setTimestamp($response[$i]['timestamp']);
                 //$station->setHistoric($this->findHistorycStation($response[$i]['uuidStation']));
@@ -360,5 +360,23 @@ final class StationRepositoryMysql implements StationRepository
         }
 
         return $stations;
+    }
+
+    public function findPostalCodeByLocation($locationCode)
+    {
+        $select = 'select postalCode';
+        $from = ' from `citiesZip` where `locationCode` = ? ';
+        $query = $select . $from;
+
+        $stmt = $this->conect->prepare($query);
+        $stmt->bindParam(1, $locationCode);
+
+        if ($stmt->execute()) {
+            $response = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!empty($response)) {
+                return $response['postalCode'];
+            }
+        }
+        throw new LocationCodeError();
     }
 }
