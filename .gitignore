@@ -17,6 +17,7 @@ var/redis/*
 .idea/vagrant.xml
 .idea/vcs.xml
 .idea/workspace.xml
+.idea/inspectionProfiles/
 etc/php/
 ops/eliminar mysql57.txt
 
@@ -61,3 +62,5 @@ ops/eliminar mysql57.txt
 /documentacion/MEMORIA ALFRED.docx
 /documentacion/~$moria David.docx
 /documentacion/MEMORIA MARC.docx
+/var/mysql/meteosalle/citiesZip1.frm
+/var/mysql/meteosalle/citiesZip1.ibd
