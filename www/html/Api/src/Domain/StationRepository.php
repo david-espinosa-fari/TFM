@@ -22,4 +22,6 @@ interface StationRepository
 
     public function findStationsByPostalCode($postalCode): array;
 
+    public function findPostalCodeByLocation($locationCode);
+
 }

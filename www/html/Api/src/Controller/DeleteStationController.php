@@ -36,6 +36,7 @@ final class DeleteStationController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
                 ));
 
         } catch (StationErrorException $e) {
@@ -43,6 +44,7 @@ final class DeleteStationController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

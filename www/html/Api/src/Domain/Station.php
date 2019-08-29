@@ -27,15 +27,14 @@ final class Station
         $uuidUser,
         $latitud,
         $longitud,
-        $postalCode,
         $temp,
         $humidity,
         $presion,
         $location,
-        $state
+        $state,
+        $postalCode
     )
     {
-
         $this->uuidStation = $uuidStation;
         $this->uuidUser = $uuidUser;
         $this->latitud = $latitud;
@@ -47,6 +46,7 @@ final class Station
         $this->location = $location;
         $this->state = $state;
         $this->timestamp = time();
+
     }
 
     public static function buildStation(Request $request): Station
@@ -74,12 +74,12 @@ final class Station
             $data['uuidUser'],
             $data['latitud'],
             $data['longitud'],
-            $data['postalCode'],
             $data['temp'],
             $data['humidity'],
             $data['presion'],
             $data['location'],
-            $data['state']
+            $data['state'],
+            $data['postalCode']
         );
     }
 

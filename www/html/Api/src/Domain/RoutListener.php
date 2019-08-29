@@ -40,7 +40,8 @@ class RoutListener
                 $response->headers->replace(
                     array(
                         'Content-Type' => 'application/json',
-                        'User-Agent' => 'MeteoSalleMiddel'
+                        'User-Agent' => 'MeteoSalleMiddel',
+                        'Access-Control-Allow-Origin'=>'*',
                     ));
             } else {
                 $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);

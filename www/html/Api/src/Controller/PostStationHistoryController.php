@@ -43,6 +43,8 @@ final class PostStationHistoryController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
+
                 ));
 
         } catch (StationErrorException $e) {

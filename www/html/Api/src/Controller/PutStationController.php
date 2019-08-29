@@ -34,7 +34,6 @@ final class PutStationController extends AbstractController
 
             $findStation = new FindStation($stationRepository, $cacheData, $tails);
             $station = $findStation($uuidStation);
-
             if ($uuuidUser = $request->get('uuidUser')) {
                 $station->setUuidUser($uuuidUser);
             }
@@ -72,6 +71,7 @@ final class PutStationController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
                 ));
 
         } catch (StationErrorException $e) {
@@ -79,6 +79,8 @@ final class PutStationController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
+                    'Access-Control-Allow-Origin'=>'*',
+
                 ));
 
             $jsonResponse->setEncodingOptions(400);

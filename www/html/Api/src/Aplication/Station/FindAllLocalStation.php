@@ -60,12 +60,12 @@ final class FindAllLocalStation
                     $response[$i]['uuidUser'],
                     $response[$i]['latitud'],
                     $response[$i]['longitud'],
-                    $response[$i]['postalCode'],
                     $response[$i]['temp'],
                     $response[$i]['humidity'],
                     $response[$i]['presion'],
                     $response[$i]['location'],
-                    $response[$i]['state']
+                    $response[$i]['state'],
+                    $response[$i]['postalCode']
                 );
                 $station->setTimestamp($response[$i]['timestamp']);
                 $station->setHistoric($response[$i]['historic']);
