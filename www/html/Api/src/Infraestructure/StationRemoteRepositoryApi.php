@@ -8,6 +8,7 @@ use App\Domain\Error\ApiConectionError;
 use App\Domain\Error\RemoteStationsNotFound;
 use App\Domain\Service\FindPostalCodeByLocation;
 use App\Domain\Station;
+use App\Domain\StationPrediction;
 use App\Domain\StationRemoteRepository;
 use ErrorException;
 use Symfony\Component\HttpClient\CurlHttpClient;
@@ -50,9 +51,7 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
             if (200 !== $response->getStatusCode()) {
             }
             $response = $response->getContent(true);
-            $resp = $this->convertApiResponseToDomain($response);
-
-            return $resp;
+            return $this->convertApiResponseToDomain($response);
 
         } catch (TransportExceptionInterface $e) {
             throw new ApiConectionError('Transport Error ' . $e->getMessage(), $e->getCode());
@@ -104,7 +103,7 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
 
     }
 
-    public function findPredictionsByLocationCode($locationCode): array
+    public function findPredictionsByLocationCode($locationCode): ?array
     {
         try {
             $response = $this->httpClient->request(
@@ -117,7 +116,10 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
             }
             $response = $response->getContent(false);
 
-            return $this->convertApiResponseToDomain($response);
+            if (isset($response)) {
+                return $this->convertPredictionsResponseToDomain($response);
+            }
+            throw new ApiConectionError('No predictions for this location', 404);
 
 
         } catch (TransportExceptionInterface $e) {
@@ -134,6 +136,41 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
 
     }
 
+    public function convertPredictionsResponseToDomain($apiRes): array
+    {
+        $apiResponse = json_decode($apiRes, true);
+        $predictions = [];
+
+        if (isset($apiResponse)) {
+            $count = count($apiResponse);
+            for ($i = 0; $i < $count; $i++) {
+                $timeStamp = $apiResponse[$i]['timeStamp'];
+                $location = $apiResponse[$i]['location'];//
+                $state = $apiResponse[$i]['state'];
+                $latitud = $apiResponse[$i]['latitude'];
+                $longitud = $apiResponse[$i]['longitude'];
+                $temp = $apiResponse[$i]['temperature'];
+                $humidity = $apiResponse[$i]['humidity'];
+                $presion = $apiResponse[$i]['pressure'];
+                $prediction = new StationPrediction(
+                    $timeStamp,
+                    $location,
+                    $state,
+                    $latitud,
+                    $longitud,
+                    $temp,
+                    $humidity,
+                    $presion
+
+                );
+
+                $predictions[] = $prediction;
+
+            }
+            return $predictions;
+        }
+    }
+
     public function findStationsByLocationCode($locationCode): array
     {
 
@@ -145,6 +182,7 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
                 ]);
 
             if (200 !== $response->getStatusCode()) {
+
                 throw new ApiConectionError('Error Status code ' . $response->getStatusCode());
             }
             $response = $response->getContent(false);
