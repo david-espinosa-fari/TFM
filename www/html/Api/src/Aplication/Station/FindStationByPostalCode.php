@@ -46,19 +46,19 @@ final class FindStationByPostalCode
     public function __invoke($postalCode): array
     {
         try {
-
             $locationCode = $this->repository->findLocationCode($postalCode);
-            $remoteStations = $this->findRemoteStations($locationCode);
 
+            $remoteStations = $this->findRemoteStations($locationCode);
             $localStations = $this->findLocalStations($postalCode);
+
             $allStations = array_merge($localStations, $remoteStations);
 
         } catch (RemoteStationsNotFound $exception) {
-            $allStations = $localStations ?? $remoteStations;
+            $allStations = $localStations;
         } catch (ApiConectionError $exception) {
-            $allStations = $localStations ?? $remoteStations;
+            $allStations = $localStations;
         } catch (LocationCodeError $locationCodeError) {
-            $allStations = $localStations ?? $remoteStations;
+            throw new StationErrorException($locationCodeError->getMessage(), $locationCodeError->getCode());
         } catch (StationErrorException $exception) {
             $allStations = $localStations ?? $remoteStations;
         }
