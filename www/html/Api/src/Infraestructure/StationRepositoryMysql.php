@@ -261,7 +261,10 @@ final class StationRepositoryMysql implements StationRepository
         $statment = $this->conect->prepare($query);
 
         $statment->bindValue(':uuidStation', $uuidStation);
-        $statment->execute();
+
+        if (!$statment->execute()) {
+            throw new StationErrorException('Could not delete station.', 500);
+        }
     }
 
     public function addStationHistory(StationHistory $stationHistory): void
