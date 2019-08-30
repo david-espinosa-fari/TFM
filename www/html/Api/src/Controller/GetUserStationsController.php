@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Aplication\User\FindUser;
 use App\Aplication\User\FindUserStations;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\StationErrorException;
+use App\Domain\Users\Error\UserErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRepositoryMysql;
 use App\Infraestructure\TailsRepositoryRabbit;
+use App\Infraestructure\Users\UserRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,7 +32,13 @@ final class GetUserStationsController extends AbstractController
                 $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
                 $tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);
 
+                $userRepository = new UserRepositoryMysql();
+                $findUser = new FindUser($userRepository, $cacheData);
+                $findUser($uuidUser);
+
             } catch (RedisConectionErrorException $e) {
+                throw new StationErrorException($e->getMessage(), $e->getCode());
+            }catch (UserErrorException $e){
                 throw new StationErrorException($e->getMessage(), $e->getCode());
             }
 

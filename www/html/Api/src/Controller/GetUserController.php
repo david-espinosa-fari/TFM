@@ -24,10 +24,10 @@ final class GetUserController extends AbstractController
 
         try {
 
-            $stationRepository = new UserRepositoryMysql();
+            $userRepository = new UserRepositoryMysql();
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
-            $findUser = new FindUser($stationRepository, $cacheData);
+            $findUser = new FindUser($userRepository, $cacheData);
             $user = $findUser($uuidUser);
 
             $jsonResponse = new JsonResponse($user->getUserLikeArray(), 200,
