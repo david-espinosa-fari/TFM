@@ -38,7 +38,7 @@ final class UserRepositoryMysql implements UserRepository
     {
         try {
             $this->findUser((string)$user);
-            throw new Exception('User already exists try tu update, use method PUT instead', 400);
+            throw new Exception('User already exists try update, use method PUT instead', 400);
         } catch (UserErrorException $exception) {
 
             $uuidUser = (string)$user;
