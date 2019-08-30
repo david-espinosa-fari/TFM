@@ -64,3 +64,5 @@ ops/eliminar mysql57.txt
 /documentacion/MEMORIA MARC.docx
 /var/mysql/meteosalle/citiesZip1.frm
 /var/mysql/meteosalle/citiesZip1.ibd
+.idea/*
+/.idea/*
