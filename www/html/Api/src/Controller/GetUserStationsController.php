@@ -35,6 +35,7 @@ final class GetUserStationsController extends AbstractController
                 $userRepository = new UserRepositoryMysql();
                 $findUser = new FindUser($userRepository, $cacheData);
                 $findUser($uuidUser);
+                unset($userRepository, $findUser);
 
             } catch (RedisConectionErrorException $e) {
                 throw new StationErrorException($e->getMessage(), $e->getCode());

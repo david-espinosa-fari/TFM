@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Aplication\User\DeleteUser;
+use App\Aplication\User\FindUser;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Users\Error\UserErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
@@ -26,6 +27,10 @@ final class DeleteUserController extends AbstractController
             $userRepository = new UserRepositoryMysql();
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 
+            $findUser = new FindUser($userRepository, $cacheData);
+            $findUser($uuidUser);
+            unset($findUser);
+            
             $delete = new DeleteUser($userRepository, $cacheData);
             $delete($uuidUser);
 
