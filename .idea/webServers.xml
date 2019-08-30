@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="63f585a4-342f-418f-ad23-51d070cb3d71" name="Proyecto comun TFM" url="http://localhost">
+        <fileTransfer port="0" mountedRoot="D:\MeteosalleProyect\MeteoSalle\Middle" accessType="MOUNT" />
+      </webServer>
+    </option>
+  </component>
+</project>
