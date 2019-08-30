@@ -246,8 +246,7 @@ final class StationRepositoryMysql implements StationRepository
         $statment->bindValue(':location', $location);
         $statment->bindValue(':state', $state);
 
-        if (!$statment->execute())
-        {
+        if (!$statment->execute()) {
             throw new StationErrorException('Station could not being update check your request values. Values type temp=decimal(4,2), humidity=decimal(4,2), presion=decimal(6,2),lat=decimal(10,8), longitud=decimal(11,9) ', 400);
         }
     }
@@ -345,7 +344,6 @@ final class StationRepositoryMysql implements StationRepository
         $stmt->execute();
 
         $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
         $count = count($response);
         for ($i = 0; $i < $count; $i++) {
