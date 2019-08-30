@@ -8,6 +8,7 @@ use App\Domain\CacheDataRepository;
 use App\Domain\Error\ApiConectionError;
 use App\Domain\Error\RemoteStationsNotFound;
 use App\Domain\Station;
+use App\Domain\StationErrorException;
 use App\Domain\StationRemoteRepository;
 use App\Domain\StationRepository;
 use App\Domain\TailMessageRepository;
@@ -89,11 +90,14 @@ final class FindAllStations
     public function findWithOutCache($withoutCache = false): array
     {
         //$query = self::CACHE_KEY_VALUE;
+        try {
         $localStations = new FindAllLocalStation($this->repository, $this->cache, $this->tailMessageRepository);
         if ($withoutCache) {
             $localStations = $localStations->findWithOutCache();
         } else {
             $localStations = $localStations();
+        }
+        }catch (StationErrorException $exception){
         }
 
         try {
@@ -124,9 +128,10 @@ final class FindAllStations
             }
 
             //$this->cache->insert($query, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
+            return $allStations;
         }
 
-        return $allStations;
+        throw new StationErrorException('We could not find any stations sorry',500);
 
     }
 
