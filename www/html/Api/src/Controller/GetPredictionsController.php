@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Aplication\Station\FindRemotePredictionStations;
 use App\Domain\Error\ApiConectionError;
+use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
 use App\Infraestructure\StationRemoteRepositoryApi;
 use App\Infraestructure\StationRepositoryMysql;
@@ -45,7 +46,9 @@ final class GetPredictionsController extends AbstractController
 
                 $stations[] = $station;
             }
-            $jsonResponse = new JsonResponse($stations, 200,
+
+            $stationLinks = new StationsLinks();
+            $jsonResponse = new JsonResponse(array_merge($stations,['links'=>$stationLinks->getLinksForPostalCode($postalCode)]), 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

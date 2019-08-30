@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Aplication\User\CreateUser;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Users\Error\UserErrorException;
+use App\Domain\Users\Services\UserLinks;
 use App\Domain\Users\User;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,8 +43,13 @@ final class PostUserController extends AbstractController
             }
 
 
+            $userLinks = new UserLinks();
+
             return new JsonResponse(
-                ['Message' => 'User ' . $user . ' created'],
+                [
+                    'Message' => 'User ' . $user . ' created',
+                    'links'=>$userLinks->getLinksForPost((string)$user)
+                ],
                 201,
                 array(
                     'Content-Type' => 'application/json',

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Aplication\Station\FindStationByPostalCode;
 use App\Domain\Error\RedisConectionErrorException;
+use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRemoteRepositoryApi;
@@ -47,7 +48,9 @@ final class GetStationsByPostalCodeController extends AbstractController
 
                 $stations[] = $station;
             }
-            $jsonResponse = new JsonResponse($stations, 200,
+
+            $stationsLinks = new StationsLinks();
+            $jsonResponse = new JsonResponse(array_merge($stations,['links'=>$stationsLinks->getLinksForPostalCode($postalCode)]), 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

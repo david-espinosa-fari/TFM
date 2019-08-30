@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Aplication\User\FindUser;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Users\Error\UserErrorException;
+use App\Domain\Users\Services\UserLinks;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\Users\UserRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,7 +31,9 @@ final class GetUserController extends AbstractController
             $findUser = new FindUser($userRepository, $cacheData);
             $user = $findUser($uuidUser);
 
-            $jsonResponse = new JsonResponse($user->getUserLikeArray(), 200,
+            $userLinks = new UserLinks();
+
+            $jsonResponse = new JsonResponse(array_merge($user->getUserLikeArray(),['links'=>$userLinks->getLinksForGet($uuidUser)]), 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

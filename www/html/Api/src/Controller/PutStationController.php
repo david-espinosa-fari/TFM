@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Aplication\Station\FindStation;
 use App\Aplication\Station\UpdateStation;
 use App\Domain\Error\RedisConectionErrorException;
+use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRepositoryMysql;
@@ -65,8 +66,12 @@ final class PutStationController extends AbstractController
             $update = new UpdateStation($stationRepository, $tails);
             $update($station);
 
+            $stationsLinks = new StationsLinks();
             return new JsonResponse(
-                ['Message' => 'Station ' . $station . ' updated'],
+                [
+                    'Message' => 'Station ' . $station . ' updated',
+                    'links'=>$stationsLinks->getLinksForPUT((string)$station)
+                ],
                 200,
                 array(
                     'Content-Type' => 'application/json',

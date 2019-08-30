@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Aplication\User\FindUser;
 use App\Aplication\User\FindUserStations;
 use App\Domain\Error\RedisConectionErrorException;
+use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
 use App\Domain\Users\Error\UserErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
@@ -54,7 +55,10 @@ final class GetUserStationsController extends AbstractController
 
                 $stations[] = $station;
             }
-            $jsonResponse = new JsonResponse($stations, 200,
+
+            $stationLinks = new StationsLinks();
+
+            $jsonResponse = new JsonResponse(array_merge($stations,['links'=>$stationLinks->getLinksForAll()]), 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

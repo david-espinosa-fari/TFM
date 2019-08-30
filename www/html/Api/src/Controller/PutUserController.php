@@ -6,6 +6,7 @@ use App\Aplication\User\FindUser;
 use App\Aplication\User\UpdateUser;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Users\Error\UserErrorException;
+use App\Domain\Users\Services\UserLinks;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\Users\UserRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,8 +56,13 @@ final class PutUserController extends AbstractController
             $update = new UpdateUser($userRepository, $cacheData);
             $update($user);
 
+            $userLinks = new UserLinks();
+
             return new JsonResponse(
-                ['Message' => 'User ' . $user . ' updated'],
+                [
+                    'Message' => 'User ' . $user . ' updated',
+                    'links'=>$userLinks->getLinksForPut((string)$user)
+                ],
                 200,
                 array(
                     'Content-Type' => 'application/json',

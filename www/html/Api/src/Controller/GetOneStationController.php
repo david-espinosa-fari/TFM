@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Aplication\Station\FindStation;
 use App\Domain\Error\RedisConectionErrorException;
+use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRepositoryMysql;
@@ -33,7 +34,8 @@ final class GetOneStationController extends AbstractController
             $findStation = new FindStation($stationRepository, $cacheData, $tails);
             $station = $findStation($uuidStation);
 
-            $jsonResponse = new JsonResponse($station->getStationLikeArray(), 200,
+            $stationsLinks = new StationsLinks();
+            $jsonResponse = new JsonResponse(array_merge($station->getStationLikeArray(),['links'=>$stationsLinks->getLinksForGET($uuidStation)]), 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

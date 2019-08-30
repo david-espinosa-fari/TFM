@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Aplication\Station\DeleteStation;
 use App\Domain\Error\RedisConectionErrorException;
+use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\StationRepositoryMysql;
@@ -30,8 +31,10 @@ final class DeleteStationController extends AbstractController
             $delete = new DeleteStation($stationRepository, $cacheData);
             $delete($uuidStation);
 
+            $stationsLinks = new StationsLinks();
+
             return new JsonResponse(
-                ['Message' => 'Station deleted'],
+                ['Message' => 'Station deleted','links'=>$stationsLinks->getLinksForDELETE($uuidStation)],
                 200,
                 array(
                     'Content-Type' => 'application/json',

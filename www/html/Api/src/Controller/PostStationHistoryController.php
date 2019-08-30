@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Aplication\Station\AddStationHistory;
 use App\Domain\Error\RedisConectionErrorException;
+use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
 use App\Domain\StationHistory;
 use App\Infraestructure\CacheDataRepositoryRedis;
@@ -36,9 +37,13 @@ final class PostStationHistoryController extends AbstractController
             $addStationHistory = new AddStationHistory($repository, $cacheDataRepository);
             $addStationHistory($stationHistory);
 
+            $stationLinks = new StationsLinks();
 
             return new JsonResponse(
-                ['Message' => 'history for the station ' . $stationHistory . ' updated'],
+                [
+                    'Message' => 'history for the station ' . $stationHistory . ' updated',
+                    'links'=>$stationLinks->getLinksForPUT($uuidStation)
+                ],
                 201,
                 array(
                     'Content-Type' => 'application/json',

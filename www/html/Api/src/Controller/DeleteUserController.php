@@ -6,6 +6,7 @@ use App\Aplication\User\DeleteUser;
 use App\Aplication\User\FindUser;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Users\Error\UserErrorException;
+use App\Domain\Users\Services\UserLinks;
 use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\Users\UserRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,12 +31,16 @@ final class DeleteUserController extends AbstractController
             $findUser = new FindUser($userRepository, $cacheData);
             $findUser($uuidUser);
             unset($findUser);
-            
+
             $delete = new DeleteUser($userRepository, $cacheData);
             $delete($uuidUser);
 
+            $userLinks = new UserLinks();
             return new JsonResponse(
-                ['Message' => 'User deleted'],
+                [
+                    'Message' => 'User deleted',
+                    $userLinks->getLinksForDelete('{uuidUser}')
+                ],
                 200,
                 array(
                     'Content-Type' => 'application/json',

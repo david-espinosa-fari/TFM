@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Aplication\Station\CreateStation;
+use App\Domain\Service\StationsLinks;
 use App\Domain\Station;
 use App\Domain\StationErrorException;
 use App\Infraestructure\StationRepositoryMysql;
@@ -36,8 +37,12 @@ final class PostStationController extends AbstractController
                 throw new StationErrorException($exception->getMessage(), $exception->getCode());
             }
 
+            $stationsLinks = new StationsLinks();
             return new JsonResponse(
-                ['Message' => 'Station ' . $station . ' created'],
+                [
+                    'Message' => 'Station ' . $station . ' created',
+                    'links'=>$stationsLinks->getLinksForPOST((string)$station)
+                ],
                 201,
                 array(
                     'Content-Type' => 'application/json',
