@@ -75,7 +75,7 @@ final class StationRepositoryMysql implements StationRepository
             $statment->bindParam(9, $location);
             $statment->bindParam(10, $state);
             if (!$statment->execute()) {
-                throw new StationErrorException('Could not insert value, check your request; user most exist and CHANGE your uuidStation', 400);
+                throw new StationErrorException('Could not insert value, check your request; user most exist or CHANGE your uuidStation', 400);
             }
         }
     }
@@ -224,10 +224,12 @@ final class StationRepositoryMysql implements StationRepository
         $postalCode = $station->getPostalCode();
         $temp = $station->getTemp();
         $humidity = $station->getHumidity();
+        $presion = $station->getPresion();
+        $location = $station->getLocation();
         $state = $station->getState();
 
         $update = "UPDATE `station` SET ";
-        $values = "uuidUser = :uuidUser, latitud =:latitud, longitud=:longitud, postalCode=:postalCode, temp=:temp, humidity=:humidity, state=:state";
+        $values = "uuidUser = :uuidUser, latitud =:latitud, longitud=:longitud, postalCode=:postalCode, temp=:temp, humidity=:humidity, presion=:presion,location=:location, state=:state";
         $where = " WHERE uuidStation = :uuidStation";
 
         $query = $update . $values . $where;
@@ -240,8 +242,14 @@ final class StationRepositoryMysql implements StationRepository
         $statment->bindValue(':postalCode', $postalCode);
         $statment->bindValue(':temp', $temp);
         $statment->bindValue(':humidity', $humidity);
+        $statment->bindValue(':presion', $presion);
+        $statment->bindValue(':location', $location);
         $statment->bindValue(':state', $state);
-        $statment->execute();
+
+        if (!$statment->execute())
+        {
+            throw new StationErrorException('Station could not being update check your request values. Values type temp=decimal(4,2), humidity=decimal(4,2), presion=decimal(6,2),lat=decimal(10,8), longitud=decimal(11,9) ', 400);
+        }
     }
 
     public function deleteStation($uuidStation): void
@@ -276,7 +284,7 @@ final class StationRepositoryMysql implements StationRepository
         $statment->bindParam(4, $presion);
 
         if (!$statment->execute()) {
-            throw new StationErrorException('Could not insert value, check your request; station most exist examples values temp=28.99, humidity=89.99, presion=1214.79', 400);
+            throw new StationErrorException('Could not insert value, check your request; station most exist. Values type temp=decimal(4,2), humidity=decimal(4,2), presion=decimal(6,2),lat=decimal(10,8), longitud=decimal(11,9) ', 400);
         }
     }
 
