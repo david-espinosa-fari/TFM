@@ -27,7 +27,7 @@ services:
     # please note that last definitions always *replace* previous ones
 
 ###########################################
-    App\Domain\RoutListener:
+    App\Infraestructure\RoutListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Domain;
+namespace App\Infraestructure;
 
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Domain;
+namespace App\Infraestructure;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
