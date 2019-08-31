@@ -35,7 +35,7 @@ final class GetOneStationController extends AbstractController
             $station = $findStation($uuidStation);
 
             $stationsLinks = new StationsLinks();
-            $jsonResponse = new JsonResponse(array_merge($station->getStationLikeArray(),['links'=>$stationsLinks->getLinksForGET($uuidStation)]), 200,
+            $jsonResponse = new JsonResponse(array_merge(['station'=>$station->getStationLikeArray(),'links'=>$stationsLinks->getLinksForGET($uuidStation)]), 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

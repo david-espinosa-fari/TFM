@@ -33,7 +33,7 @@ final class GetUserController extends AbstractController
 
             $userLinks = new UserLinks();
 
-            $jsonResponse = new JsonResponse(array_merge($user->getUserLikeArray(),['links'=>$userLinks->getLinksForGet($uuidUser)]), 200,
+            $jsonResponse = new JsonResponse(['user'=>$user->getUserLikeArray(),'links'=>$userLinks->getLinksForGet($uuidUser)], 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

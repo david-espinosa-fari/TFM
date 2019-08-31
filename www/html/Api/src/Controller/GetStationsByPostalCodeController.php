@@ -50,7 +50,7 @@ final class GetStationsByPostalCodeController extends AbstractController
             }
 
             $stationsLinks = new StationsLinks();
-            $jsonResponse = new JsonResponse(array_merge($stations,['links'=>$stationsLinks->getLinksForPostalCode($postalCode)]), 200,
+            $jsonResponse = new JsonResponse(['stations'=>$stations,'links'=>$stationsLinks->getLinksForPostalCode($postalCode)], 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

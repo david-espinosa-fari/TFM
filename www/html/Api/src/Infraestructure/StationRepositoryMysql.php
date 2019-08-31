@@ -139,20 +139,24 @@ final class StationRepositoryMysql implements StationRepository
 
     public function findPredictionsStation($postalCode): ?array
     {
+        $predictions = [];
         try {
             $apiRepository = new StationRemoteRepositoryApi();
             $findPredictions = new FindRemotePredictionStations($apiRepository, $this);
-            $predictions = [];
+
             $prediction = $findPredictions->findPredictionsByPostalCode($postalCode);
             $count = count($prediction);
             for ($i = 0; $i < $count; $i++) {
                 $predictions[] = $prediction[$i]->getStationLikeArray();
             }
 
-            return $predictions;
-
         } catch (LocationCodeError $e) {
+        } catch (ApiConectionError $e) {
+        } catch (StationErrorException $e) {
         }
+
+        return $predictions;
+
     }
 
     public function findLocationCode($postalCode): string
@@ -254,7 +258,7 @@ final class StationRepositoryMysql implements StationRepository
     public function deleteStation($uuidStation): void
     {
         $update = "UPDATE `station` SET ";
-        $values = "deletedStation = '1'";
+        $values = "deletedStation = '1', uuidUser = 'deleted'";
         $where = " WHERE uuidStation = :uuidStation";
 
         $query = $update . $values . $where;

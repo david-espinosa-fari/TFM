@@ -46,7 +46,7 @@ final class GetAllStationsController extends AbstractController
             }
 
             $stationsLinks = new StationsLinks();
-            $jsonResponse = new JsonResponse(array_merge($stations,['links'=>$stationsLinks->getLinksForGET('{uuidStation}')]), 200,
+            $jsonResponse = new JsonResponse(['stations'=>$stations,'links'=>$stationsLinks->getLinksForGET('{uuidStation}')], 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',

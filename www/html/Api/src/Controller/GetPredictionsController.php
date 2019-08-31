@@ -48,7 +48,7 @@ final class GetPredictionsController extends AbstractController
             }
 
             $stationLinks = new StationsLinks();
-            $jsonResponse = new JsonResponse(array_merge($stations,['links'=>$stationLinks->getLinksForPostalCode($postalCode)]), 200,
+            $jsonResponse = new JsonResponse(['predictions'=>$stations,'links'=>$stationLinks->getLinksForPostalCode($postalCode)], 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
