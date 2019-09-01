@@ -83,7 +83,7 @@ final class StationRepositoryMysql implements StationRepository
     public function findStation(string $uuidStation): Station
     {
         $select = 'select uuidStation, uuidUser, latitud, longitud, postalCode,  temp, humidity, presion, location, state, timestamp';
-        $from = ' from `station` where `station`.`uuidStation` = ? and deletedStation = ' . '0' . '';
+        $from = ' from `station` where `station`.`uuidStation` = ? and deletedStation = "0"  and uuidUser != "deleted"';
         $query = $select . $from;
 
         $stmt = $this->conect->prepare($query);
@@ -180,7 +180,7 @@ final class StationRepositoryMysql implements StationRepository
     {
         $stations = [];
         $select = 'select uuidStation,uuidUser,latitud,longitud,postalCode,temp,humidity,presion,location,state,timestamp';
-        $from = ' from station where deletedStation = ' . '0' . '';
+        $from = ' from station where deletedStation = "0" and uuidUser != "deleted"';
         $query = $select . $from;
 
         $stmt = $this->conect->prepare($query);
@@ -343,7 +343,7 @@ final class StationRepositoryMysql implements StationRepository
     public function findStationsByPostalCode($postalCode): array
     {
         $select = 'select uuidStation, uuidUser, latitud, longitud, postalCode,  temp, humidity, presion, location, state,timestamp';
-        $from = ' from `station` where `station`.`postalCode` = ? and deletedStation = ' . '0' . '';
+        $from = ' from `station` where `station`.`postalCode` = ? and deletedStation = "0" and uuidUser != "deleted"';
         $query = $select . $from;
 
         $stmt = $this->conect->prepare($query);

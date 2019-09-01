@@ -48,8 +48,8 @@ final class FindStationByPostalCode
         try {
             $locationCode = $this->repository->findLocationCode($postalCode);
 
-            $remoteStations = $this->findRemoteStations($locationCode);
             $localStations = $this->findLocalStations($postalCode);
+            $remoteStations = $this->findRemoteStations($locationCode);
 
             $allStations = array_merge($localStations, $remoteStations);
 
@@ -62,7 +62,10 @@ final class FindStationByPostalCode
         } catch (StationErrorException $exception) {
             $allStations = $localStations ?? $remoteStations;
         }
-
+        if (empty($allStations))
+        {
+            throw new StationErrorException('We could not found any station for this postal code', 200);
+        }
         return $allStations;
     }
 
