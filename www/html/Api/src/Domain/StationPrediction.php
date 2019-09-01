@@ -4,7 +4,7 @@
 namespace App\Domain;
 
 
-class StationPrediction
+final class StationPrediction
 {
 
     private $latitud;
