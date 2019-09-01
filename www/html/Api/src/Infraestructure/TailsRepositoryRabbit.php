@@ -7,7 +7,7 @@ use App\Domain\TailMessageRepository;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class TailsRepositoryRabbit implements TailMessageRepository
+final class TailsRepositoryRabbit implements TailMessageRepository
 {
 
     private $channel;
