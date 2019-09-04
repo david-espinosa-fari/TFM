@@ -87,9 +87,12 @@ final class FindAllStations
         return $stations;
     }
 
-    public function findWithOutCache($withoutCache = false): array
+    public function findWithOutCache($withoutCache = false):array
     {
         //$query = self::CACHE_KEY_VALUE;
+        $localStations = [];
+        $remoteStations = [];
+
         try {
         $localStations = new FindAllLocalStation($this->repository, $this->cache, $this->tailMessageRepository);
         if ($withoutCache) {
@@ -98,6 +101,7 @@ final class FindAllStations
             $localStations = $localStations();
         }
         }catch (StationErrorException $exception){
+            $localStations = [];
         }
 
         try {
@@ -110,12 +114,13 @@ final class FindAllStations
                 $remoteStations = $remoteStations();
             }
 
-            $allStations = array_merge($localStations, $remoteStations);
         } catch (RemoteStationsNotFound $exception) {
-            $allStations = $localStations;
+            $remoteStations = [];
         } catch (ApiConectionError $exception) {
-            $allStations = $localStations;
+            $remoteStations = [];
         }
+
+        $allStations = array_merge($localStations, $remoteStations);
 
         if (!empty($allStations) && is_array($allStations)) {
             $count = count($allStations);
