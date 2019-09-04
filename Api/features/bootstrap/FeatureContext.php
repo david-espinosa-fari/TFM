@@ -5,6 +5,7 @@ use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Symfony\Component\HttpClient\HttpClient;
 
 /**
  * Defines application features from the specific context.
@@ -16,6 +17,10 @@ class FeatureContext implements Context
     private $headerContentType;
     private $headerAutentication;
     private const ADDRESS_API = 'http://meteosalle.local/apiv1';
+    /**
+     * @var \Symfony\Contracts\HttpClient\HttpClientInterface
+     */
+    private $httpClient;
 
     /**
      * Initializes context.
@@ -95,7 +100,6 @@ class FeatureContext implements Context
             $this->lastStatusCode = $exception->getResponse()->getStatusCode();
         }
     }
-    //theResponseCodeShouldBe
 
     /**
      * @Given /^the response body should have "([^"]*)"$/

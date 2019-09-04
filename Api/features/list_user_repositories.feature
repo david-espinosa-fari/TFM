@@ -12,9 +12,8 @@ Feature: List Api status
     Given I do a "GET" request to "http://meteosalle.local/apiv1/stat"
     Then the response code should be "404"
 
-  Scenario: when want login
+  Scenario: when want create User
     Given I create a user whit "POST" request to "http://meteosalle.local/apiv1/user/login/" whit userName "12344" password "a" and uuidUser "12344"
     Then the response code should be "404"
-
 
 
