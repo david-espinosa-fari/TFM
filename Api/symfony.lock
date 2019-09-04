@@ -1,4 +1,16 @@
 {
+    "behat/behat": {
+        "version": "v3.5.0"
+    },
+    "behat/gherkin": {
+        "version": "v4.6.0"
+    },
+    "behat/transliterator": {
+        "version": "v1.2.0"
+    },
+    "container-interop/container-interop": {
+        "version": "1.2.0"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -35,6 +47,15 @@
     "firebase/php-jwt": {
         "version": "v5.0.0"
     },
+    "guzzlehttp/guzzle": {
+        "version": "6.3.3"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.6.1"
+    },
     "monolog/monolog": {
         "version": "1.24.0"
     },
@@ -65,8 +86,14 @@
     "psr/container": {
         "version": "1.0.0"
     },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/log": {
         "version": "1.1.0"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
     },
     "roave/security-advisories": {
         "version": "dev-master"
@@ -91,6 +118,9 @@
     },
     "symfony/cache-contracts": {
         "version": "v1.1.5"
+    },
+    "symfony/class-loader": {
+        "version": "v3.4.31"
     },
     "symfony/config": {
         "version": "v4.3.3"
@@ -258,6 +288,22 @@
     },
     "symfony/test-pack": {
         "version": "v1.0.6"
+    },
+    "symfony/translation": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "2ad9d2545bce8ca1a863e50e92141f0b9d87ffcd"
+        },
+        "files": [
+            "./config/packages/translation.yaml",
+            "./translations/.gitignore"
+        ]
+    },
+    "symfony/translation-contracts": {
+        "version": "v1.1.6"
     },
     "symfony/var-exporter": {
         "version": "v4.3.3"
