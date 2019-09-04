@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Aplication\User\CreateUserToken;
 use App\Aplication\User\DeleteUser;
 use App\Aplication\User\FindUser;
 use App\Domain\Error\RedisConectionErrorException;
@@ -11,6 +12,7 @@ use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\Users\UserRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class DeleteUserController extends AbstractController
@@ -18,13 +20,22 @@ final class DeleteUserController extends AbstractController
     /**
      * @Route("/apiv1/user/{uuidUser}", name="delete_user", methods={"DELETE"})
      * @param $uuidUser
+     * @param Request $request
      * @return JsonResponse
      * @throws RedisConectionErrorException
      */
-    public function index($uuidUser)
+    public function index($uuidUser, Request $request)
     {
 
         try {
+            $headerToken = $request->headers->get('authorization');
+            if (
+                isset($headerToken) &&
+                CreateUserToken::checkToken($headerToken)) {
+            } else {
+                throw new UserErrorException('User not Ahutorized', 403);
+            }
+
             $userRepository = new UserRepositoryMysql();
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 

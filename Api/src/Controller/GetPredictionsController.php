@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Aplication\Station\FindRemotePredictionStations;
+use App\Aplication\User\CreateUserToken;
 use App\Domain\Error\ApiConectionError;
 use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
@@ -10,6 +11,7 @@ use App\Infraestructure\StationRemoteRepositoryApi;
 use App\Infraestructure\StationRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class GetPredictionsController extends AbstractController
@@ -19,11 +21,20 @@ final class GetPredictionsController extends AbstractController
      * @param $postalCode
      * @return JsonResponse
      */
-    public function index($postalCode): JsonResponse
+    public function index($postalCode, Request $request): JsonResponse
     {
         $stations = [];
 
         try {
+            $headerToken = $request->headers->get('authorization');
+            if (
+                isset($headerToken) &&
+                CreateUserToken::checkToken($headerToken)) {
+            } else {
+
+                throw new StationErrorException('User not Ahutorized',403);
+            }
+
             $remoteRepository = new StationRemoteRepositoryApi();
             $stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
             $predictions = new FindRemotePredictionStations($remoteRepository, $stationRepository);

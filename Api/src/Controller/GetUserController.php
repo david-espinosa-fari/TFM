@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Aplication\User\CreateUserToken;
 use App\Aplication\User\FindUser;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Users\Error\UserErrorException;
@@ -10,6 +11,7 @@ use App\Infraestructure\CacheDataRepositoryRedis;
 use App\Infraestructure\Users\UserRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class GetUserController extends AbstractController
@@ -17,13 +19,22 @@ final class GetUserController extends AbstractController
     /**
      * @Route("/apiv1/user/{uuidUser}", name="get_user", methods={"GET"})
      * @param $uuidUser
+     * @param Request $request
      * @return JsonResponse
      * @throws RedisConectionErrorException
      */
-    public function index($uuidUser): JsonResponse
+    public function index($uuidUser, Request $request): JsonResponse
     {
-
         try {
+            $headerToken = $request->headers->get('Authorization');
+            //var_dump($headerToken);
+            if (
+                isset($headerToken) &&
+                CreateUserToken::checkToken($headerToken)) {
+            } else {
+                throw new UserErrorException('User not Authorized', 403);
+            }
+
 
             $userRepository = new UserRepositoryMysql();
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
@@ -31,13 +42,15 @@ final class GetUserController extends AbstractController
             $findUser = new FindUser($userRepository, $cacheData);
             $user = $findUser($uuidUser);
 
-            $userLinks = new UserLinks();
+            $userReturn = $user->getUserLikeArray();
+            unset($userReturn['password']);
 
-            $jsonResponse = new JsonResponse(['user'=>$user->getUserLikeArray(),'links'=>$userLinks->getLinksForGet($uuidUser)], 200,
+            $userLinks = new UserLinks();
+            $jsonResponse = new JsonResponse(['user' => $userReturn, 'links' => $userLinks->getLinksForGet($uuidUser)], 200,
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
-                    'Access-Control-Allow-Origin'=>'*',
+                    'Access-Control-Allow-Origin' => '*',
                 ));
 
             $jsonResponse->setEncodingOptions(400);
@@ -47,7 +60,7 @@ final class GetUserController extends AbstractController
                 array(
                     'Content-Type' => 'application/json',
                     'User-Agent' => 'MeteoSalleMiddel',
-                    'Access-Control-Allow-Origin'=>'*',
+                    'Access-Control-Allow-Origin' => '*',
                 ));
 
             $jsonResponse->setEncodingOptions(400);

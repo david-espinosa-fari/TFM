@@ -19,6 +19,7 @@ final class UserLinks
     {
         $this->urlUser = $_SERVER['PROTOCOL'].$_SERVER['HTTP_HOST'].'/apiv1/user/';
         $this->urlStations = $_SERVER['PROTOCOL'].$_SERVER['HTTP_HOST'].'/apiv1/stations/';
+       // $this->urlLogin = $_SERVER['PROTOCOL'].$_SERVER['HTTP_HOST'].'/apiv1/login/';
     }
 
     public function getLinksForPut($uuidUser):array
@@ -58,11 +59,11 @@ final class UserLinks
 
     public function getLinksForAll():array
     {
-        $link[] = $this->deleteUser();
-        $link[] = $this->putUser();
-        $link[] = $this->getUser();
         $link[] = $this->postUser();
+        $link[] = $this->postLogin();
+        $link[] = $this->putUser();
         $link[] = $this->getUserStations();
+        $link[] = $this->deleteUser();
 
         return $link;
     }
@@ -82,7 +83,7 @@ final class UserLinks
             [
                 'href'=> $this->urlUser.$uuidUser,
                 'action'=>'PUT ',
-                'types'=>['multipart/form-data', 'application/x-www-form-urlencoded']
+                'types'=>['headers: Authorization','multipart/form-data', 'application/x-www-form-urlencoded']
             ];
     }
     private function getUser($uuidUser = '{uuidUser}'): array
@@ -91,7 +92,7 @@ final class UserLinks
             [
                 'href'=> $this->urlUser.$uuidUser,
                 'action'=>'GET ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
             ];
     }
     private function deleteUser($uuidUser = '{uuidUser}'): array
@@ -100,16 +101,25 @@ final class UserLinks
             [
                 'href'=> $this->urlUser.$uuidUser,
                 'action'=>'DELETE ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
             ];
     }
     private function getUserStations($uuidUser = '{uuidUser}'): array
     {
         return
             [
-                'href'=> $this->urlUser.$uuidUser.'/stations',
+                'href'=> $this->urlUser.$uuidUser.'stations/',
                 'action'=>'GET ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
+            ];
+    }
+    private function postLogin(): array
+    {
+        return
+            [
+                'href'=> $this->urlUser.'login/',
+                'action'=>'POST ',
+                'types'=>['multipart/form-data', 'application/x-www-form-urlencoded']
             ];
     }
 

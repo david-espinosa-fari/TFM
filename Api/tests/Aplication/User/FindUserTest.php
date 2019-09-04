@@ -4,25 +4,21 @@
 namespace Test\Aplication\User;
 
 
-use App\Aplication\User\FindUser;
-use App\Domain\Users\User;
+use App\Infraestructure\Users\UserRepositoryMysql;
+use Exception;
 use PHPUnit\Framework\TestCase;
-use tests\Infraestructure\CacheDataInMemoryRepository;
-use tests\Infraestructure\InMemoryUserRepositoryTest;
 
 class FindUserTest  extends TestCase
 {
     /**
      * @test
      */
-    public function shouldReturnAUserObject():User //UserErrorException('User could not being updated', 400)
+    public function shouldThrowExceptionFindUser() //UserErrorException('User could not being updated', 400)
     {
+        $this->expectException(Exception::class);
+        $userRepository = new UserRepositoryMysql();
 
-        $userRepository = new InMemoryUserRepositoryTest();
-        $cacheData = new CacheDataInMemoryRepository($_SERVER['HOST_REDIS']);
+        $findUser = $userRepository->findUser('u22');
 
-        $findUser = new FindUser($userRepository, $cacheData);
-        $user = $findUser('deleted');
-        $this->assertInstanceOf(User::class);
     }
 }

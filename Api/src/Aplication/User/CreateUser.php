@@ -4,22 +4,18 @@
 namespace App\Aplication\User;
 
 
+use App\Domain\CacheDataRepository;
 use App\Domain\Users\User;
-use App\Infraestructure\CacheDataRepositoryRedis;
-use App\Infraestructure\Users\UserRepositoryMysql;
+use App\Domain\Users\UserRepository;
 
 final class CreateUser
 {
-    /**
-     * @var UserRepositoryMysql
-     */
+
     private $userRepositoryMysql;
-    /**
-     * @var CacheDataRepositoryRedis
-     */
+
     private $cacheDataRepositoryRedis;
 
-    public function __construct(UserRepositoryMysql $userRepositoryMysql, CacheDataRepositoryRedis $cacheDataRepositoryRedis)
+    public function __construct(UserRepository $userRepositoryMysql, CacheDataRepository $cacheDataRepositoryRedis)
     {
 
         $this->userRepositoryMysql = $userRepositoryMysql;

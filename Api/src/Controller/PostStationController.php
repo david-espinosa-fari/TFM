@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Aplication\Station\CreateStation;
+use App\Aplication\User\CreateUserToken;
 use App\Domain\Service\StationsLinks;
 use App\Domain\Station;
 use App\Domain\StationErrorException;
@@ -24,6 +25,15 @@ final class PostStationController extends AbstractController
     public function index(Request $request): JsonResponse
     {
         try {
+            $headerToken = $request->headers->get('authorization');
+            if (
+                isset($headerToken) &&
+                CreateUserToken::checkToken($headerToken)) {
+            } else {
+
+                throw new StationErrorException('User not Ahutorized',403);
+            }
+
 
             $station = Station::buildStation($request);
 

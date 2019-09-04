@@ -90,7 +90,7 @@ final class StationsLinks
             [
                 'href'=> $this->urlStations,
                 'action'=>'GET ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
             ];
     }
     private function deleteStations($uuidStation = '{uuidStation}'): array
@@ -99,7 +99,7 @@ final class StationsLinks
             [
                 'href'=> $this->urlStations.$uuidStation,
                 'action'=>'DELETE ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
             ];
     }
     private function putStations($uuidStation = '{uuidStation}'): array
@@ -108,7 +108,7 @@ final class StationsLinks
             [
                 'href'=> $this->urlStations.$uuidStation,
                 'action'=>'PUT ',
-                'types'=>['multipart/form-data', 'application/x-www-form-urlencoded']
+                'types'=>['headers: Authorization','multipart/form-data', 'application/x-www-form-urlencoded']
             ];
     }
     private function getStations($uuidStation = '{uuidStation}'): array
@@ -117,7 +117,7 @@ final class StationsLinks
             [
                 'href'=> $this->urlStations.$uuidStation,
                 'action'=>'GET ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
             ];
     }
     private function postStations($uuidStation = '{uuidStation}'): array
@@ -126,7 +126,7 @@ final class StationsLinks
             [
                 'href'=> $this->urlStations.$uuidStation,
                 'action'=>'POST ',
-                'types'=>['multipart/form-data', 'application/x-www-form-urlencoded']
+                'types'=>['headers: Authorization','multipart/form-data', 'application/x-www-form-urlencoded']
             ];
     }
     private function postStationsHistory($uuidStation = '{uuidStation}'): array
@@ -135,7 +135,7 @@ final class StationsLinks
             [
                 'href'=> $this->urlStations.$uuidStation.'/history',
                 'action'=>'POST ',
-                'types'=>['multipart/form-data', 'application/x-www-form-urlencoded']
+                'types'=>['headers: Authorization','multipart/form-data', 'application/x-www-form-urlencoded']
             ];
     }
     private function getStationsPostalCode($postalCode = '{postalCode}'): array
@@ -144,7 +144,7 @@ final class StationsLinks
             [
                 'href'=> $this->urlStations.'postalcode/'.$postalCode,
                 'action'=>'GET ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
             ];
     }
     private function getPredictionsPostalCode($postalCode = '{postalCode}'): array
@@ -153,7 +153,7 @@ final class StationsLinks
             [
                 'href'=> $this->urlPredictions.$postalCode,
                 'action'=>'GET ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
             ];
     }
     private function getUser($uuidUser = '{uuidUser}'): array
@@ -162,7 +162,8 @@ final class StationsLinks
             [
                 'href'=> $this->urlUser.$uuidUser,
                 'action'=>'GET ',
-                'types'=>[]
+                'types'=>['headers: Authorization']
             ];
     }
+
 }

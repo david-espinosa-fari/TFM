@@ -2,7 +2,6 @@
 
 namespace App\Infraestructure;
 
-//use App\Domain\Error\JsonErrorResponse;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\CacheDataRepository;
 

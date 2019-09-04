@@ -73,11 +73,12 @@ final class UserRepositoryMysql implements UserRepository
     public function findUser(string $uuidUser): User
     {
         $select = 'select uuidUser,name,lastname,password,userName,age,gender';
-        $from = ' from `user` where `user`.`uuidUser` = ? and deletedUser= ' . '0' . '';
+        $from = ' from `user` where (`user`.`uuidUser` = ? or `user`.`userName` = ?) and deletedUser= "0"';
         $query = $select . $from;
 
         $stmt = $this->conect->prepare($query);
         $stmt->bindParam(1, $uuidUser);
+        $stmt->bindParam(2, $uuidUser);
         $stmt->execute();
 
         $response = $stmt->fetch(PDO::FETCH_ASSOC);

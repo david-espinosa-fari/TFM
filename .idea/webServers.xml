@@ -5,6 +5,14 @@
       <webServer id="63f585a4-342f-418f-ad23-51d070cb3d71" name="Proyecto comun TFM" url="http://localhost">
         <fileTransfer port="0" mountedRoot="D:\MeteosalleProyect\MeteoSalle\Middle" accessType="MOUNT" />
       </webServer>
+      <webServer id="adf28108-76ff-40b7-8e75-ea826452b7a9" name="remote 109.232.23.121/" url="http://109.232.23.121/">
+        <fileTransfer host="109.232.23.121" port="22" rootFolder="/home/tfm/TFM" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

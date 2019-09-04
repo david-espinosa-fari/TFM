@@ -63,3 +63,4 @@ los datos de usuarios
 
 
 composer require symfony/http-client
+composer require firebase/php-jwt

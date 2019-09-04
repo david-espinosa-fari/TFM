@@ -13,7 +13,7 @@ final class TestMeteosalleController extends AbstractController
     /**
      * @Route("/apiv1/status", name="test_meteosalle")
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $stationsLinks = new StationsLinks();
         $userLinks = new UserLinks();

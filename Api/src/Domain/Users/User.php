@@ -24,7 +24,7 @@ final class User
         $this->uuidUser = $uuidUser;
         $this->name = $name;
         $this->lastname = $lastname;
-        $this->setPassword($password);
+        $this->password=$password;
         $this->userName = $userName;
         $this->age = $age;
         $this->gender = $gender;
@@ -36,7 +36,7 @@ final class User
         $data['uuidUser'] = $request->get('uuidUser');
         $data['name'] = $request->get('name');
         $data['lastname'] = $request->get('lastname');
-        $data['password'] = $request->get('password');
+        $data['password'] = self::criptPassword($request->get('password'));
         $data['userName'] = $request->get('userName');
         $data['age'] = $request->get('age');
         $data['gender'] = $request->get('gender');
@@ -58,6 +58,14 @@ final class User
         );
     }
 
+    /**
+     * @param mixed $password
+     * @return string
+     */
+    public static function criptPassword($password): string
+    {
+        return base64_encode(password_hash($password, PASSWORD_BCRYPT, array('cost'=>12)));
+    }
 
     public function __toString(): string
     {
@@ -114,7 +122,7 @@ final class User
      */
     public function setPassword($password): void
     {
-        $this->password = $password;
+        $this->password = self::criptPassword($password);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Aplication\Station\AddStationHistory;
+use App\Aplication\User\CreateUserToken;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
@@ -28,6 +29,14 @@ final class PostStationHistoryController extends AbstractController
     public function index($uuidStation, Request $request): JsonResponse
     {
         try {
+            $headerToken = $request->headers->get('authorization');
+            if (
+                isset($headerToken) &&
+                CreateUserToken::checkToken($headerToken)) {
+            } else {
+
+                throw new StationErrorException('User not Ahutorized',403);
+            }
 
             $stationHistory = StationHistory::buildStationHistory($uuidStation, $request);
 

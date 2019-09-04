@@ -13,7 +13,7 @@ services:
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
     ports:
-      - '3306:3306'
+      - '127.0.0.1:3306:3306'
     volumes:
       - ./var/mysql:/var/lib/mysql
       - ./etc/mysql/meteosalle.sql:/docker-entrypoint-initdb.d/meteosalle.sql
@@ -48,7 +48,7 @@ services:
     image: redis
     container_name: redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - ./var/redis:/data
 
@@ -62,6 +62,6 @@ services:
       RABBITMQ_DEFAULT_PASS: "rabbitmq"
       RABBITMQ_DEFAULT_VHOST: "/"
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - "127.0.0.1:15672:15672"
+      - "127.0.0.1:5672:5672"
 

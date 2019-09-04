@@ -45,33 +45,39 @@ final class FindStationByPostalCode
 
     public function __invoke($postalCode): array
     {
+        $localStations = [];
+        $remoteStations = [];
         try {
             $locationCode = $this->repository->findLocationCode($postalCode);
 
-            $localStations = $this->findLocalStations($postalCode);
-            $remoteStations = $this->findRemoteStations($locationCode);
+            try {
+                $localStations = $this->findLocalStations($postalCode);
+            } catch (StationErrorException $exception) {
+            }
+
+            try {
+                $remoteStations = $this->findRemoteStations($locationCode);
+            } catch (RemoteStationsNotFound $exception) {
+            } catch (ApiConectionError $exception) {
+            }
+
 
             $allStations = array_merge($localStations, $remoteStations);
 
-        } catch (RemoteStationsNotFound $exception) {
-            $allStations = $localStations;
-        } catch (ApiConectionError $exception) {
-            $allStations = $localStations;
+            if (empty($allStations)) {
+                throw new StationErrorException('We could not found any station for this postal code', 200);
+            }
+            return $allStations;
+
         } catch (LocationCodeError $locationCodeError) {
             throw new StationErrorException($locationCodeError->getMessage(), $locationCodeError->getCode());
-        } catch (StationErrorException $exception) {
-            $allStations = $localStations ?? $remoteStations;
         }
-        if (empty($allStations))
-        {
-            throw new StationErrorException('We could not found any station for this postal code', 200);
-        }
-        return $allStations;
+
     }
 
-    private function findRemoteStations($locationCode): array
+    private function findLocalStations($postalCode): array
     {
-        $query = self::CACHE_REMOTE_VALUE . $locationCode;
+        $query = self::CACHE_LOCAL_VALUE . $postalCode;
 
         $response = $this->cache->find($query);
 
@@ -79,9 +85,10 @@ final class FindStationByPostalCode
             return $this->convertArrayToStandardResponse($response);
         }
 
-        $remoteStations = $this->remoteRepository->findStationsByLocationCode($locationCode);
-        $this->updateCache($query, $remoteStations);
-        return $remoteStations;
+        $localStations = $this->repository->findStationsByPostalCode($postalCode);
+        $this->updateCache($query, $localStations);
+        return $localStations;
+
     }
 
     private function convertArrayToStandardResponse(array $response): array
@@ -129,9 +136,9 @@ final class FindStationByPostalCode
         }
     }
 
-    private function findLocalStations($postalCode): array
+    private function findRemoteStations($locationCode): array
     {
-        $query = self::CACHE_LOCAL_VALUE . $postalCode;
+        $query = self::CACHE_REMOTE_VALUE . $locationCode;
 
         $response = $this->cache->find($query);
 
@@ -139,10 +146,9 @@ final class FindStationByPostalCode
             return $this->convertArrayToStandardResponse($response);
         }
 
-        $localStations = $this->repository->findStationsByPostalCode($postalCode);
-        $this->updateCache($query, $localStations);
-        return $localStations;
-
+        $remoteStations = $this->remoteRepository->findStationsByLocationCode($locationCode);
+        $this->updateCache($query, $remoteStations);
+        return $remoteStations;
     }
 
 

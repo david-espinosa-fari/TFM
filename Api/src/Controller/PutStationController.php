@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Aplication\Station\FindStation;
 use App\Aplication\Station\UpdateStation;
+use App\Aplication\User\CreateUserToken;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Service\StationsLinks;
 use App\Domain\StationErrorException;
@@ -29,6 +30,15 @@ final class PutStationController extends AbstractController
     {
 
         try {
+            $headerToken = $request->headers->get('authorization');
+            if (
+                isset($headerToken) &&
+                CreateUserToken::checkToken($headerToken)) {
+            } else {
+
+                throw new StationErrorException('User not Ahutorized',403);
+            }
+
             $stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
             $tails = new TailsRepositoryRabbit($_SERVER['HOST_RABBIT']);

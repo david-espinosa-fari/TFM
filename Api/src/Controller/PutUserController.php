@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Aplication\User\CreateUserToken;
 use App\Aplication\User\FindUser;
 use App\Aplication\User\UpdateUser;
 use App\Domain\Error\RedisConectionErrorException;
@@ -27,6 +28,13 @@ final class PutUserController extends AbstractController
     {
 
         try {
+            $headerToken = $request->headers->get('authorization');
+            if (
+                isset($headerToken) &&
+                CreateUserToken::checkToken($headerToken)) {
+            } else {
+                throw new UserErrorException('User not Ahutorized', 403);
+            }
             $userRepository = new UserRepositoryMysql();
             $cacheData = new CacheDataRepositoryRedis($_SERVER['HOST_REDIS']);
 

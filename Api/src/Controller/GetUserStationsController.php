@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Aplication\User\CreateUserToken;
 use App\Aplication\User\FindUser;
 use App\Aplication\User\FindUserStations;
 use App\Domain\Error\RedisConectionErrorException;
@@ -14,6 +15,7 @@ use App\Infraestructure\TailsRepositoryRabbit;
 use App\Infraestructure\Users\UserRepositoryMysql;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class GetUserStationsController extends AbstractController
@@ -21,12 +23,23 @@ final class GetUserStationsController extends AbstractController
     /**
      * @Route("/apiv1/user/{uuidUser}/stations", name="get_user_stations", methods={"GET"})
      * @param $uuidUser
+     * @param Request $request
      * @return JsonResponse
+     * @throws UserErrorException
      */
-    public function index($uuidUser): ?JsonResponse
+    public function index($uuidUser, Request $request): ?JsonResponse
     {
         try {
-            $stations = [];
+            $headerToken = $request->headers->get('authorization');
+            if (
+                isset($headerToken) &&
+                CreateUserToken::checkToken($headerToken)) {
+            } else {
+
+                throw new StationErrorException('User not Ahutorized',403);
+            }
+
+
 
             $stationRepository = new StationRepositoryMysql($_SERVER['HOST_MYSQL']);
             try {

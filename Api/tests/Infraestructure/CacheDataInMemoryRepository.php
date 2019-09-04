@@ -13,25 +13,15 @@ final class CacheDataInMemoryRepository implements CacheDataRepository
 
     private $redis;
 
-    public function __construct(string $host = null)
+    public function __construct()
     {
-
-     if ($host === 1){
-
-         throw new RedisConectionErrorException('Error conecting to Redis ' , 500);
-     }
 
     }
 
     public function find($valueToFind)
     {
 
-        if ($valueToFind === true) {
-
-            return true;
-        }
-
-        return false;
+          return null;
     }
 
     public function insert(string $valueToInsert, array $dataToCache, $timeExpire = null): void

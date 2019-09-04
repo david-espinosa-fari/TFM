@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Aplication\User\CreateUser;
+use App\Aplication\User\CreateUserToken;
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\Users\Error\UserErrorException;
 use App\Domain\Users\Services\UserLinks;
@@ -37,10 +38,12 @@ final class PostUserController extends AbstractController
                 $createUser = new CreateUser($repository, $cacheData);
                 $user = User::buildUser($request);
                 $createUser($user);
+                $token = new CreateUserToken($user);
 
             } catch (Exception $exception) {
                 throw new UserErrorException($exception->getMessage(), $exception->getCode());
             }
+
 
 
             $userLinks = new UserLinks();
@@ -48,7 +51,8 @@ final class PostUserController extends AbstractController
             return new JsonResponse(
                 [
                     'Message' => 'User ' . $user . ' created',
-                    'links'=>$userLinks->getLinksForPost((string)$user)
+                    'links'=>$userLinks->getLinksForPost((string)$user),
+                    'token'=>$token()
                 ],
                 201,
                 array(
