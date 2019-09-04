@@ -20,7 +20,7 @@ class FindAllStationTest extends TestCase
      * @test
      */
 
-    public function shouldReturnArrayOnFindAllUseCase()
+    public function shouldReturnArrayOnFindAllUseCase(): void
     {
         $this->expectException(Exception::class);
 

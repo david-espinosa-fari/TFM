@@ -8,7 +8,7 @@ use App\Aplication\Station\FindStation;
 use Exception;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
-use tests\Infraestructure\CacheDataInMemoryRepository;
+use App\Tests\Infraestructure\CacheDataInMemoryRepository;
 
 class FindOneStationTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\Infraestructure;
+namespace App\Tests\Infraestructure;
 
 use App\Domain\Error\RedisConectionErrorException;
 use App\Domain\CacheDataRepository;
