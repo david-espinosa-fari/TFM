@@ -71,7 +71,7 @@ class UpdateStationCacheCommand extends Command
         } catch (RedisConectionErrorException $e) {
             $this->io->success('Error Redis Conection ' . $e->getMessage() . ' ' . $e->getCode());
         } catch (StationErrorException $e) {
-            $this->io->success('Error ' . $e->getMessage() . ' ' . $e->getCode());
+            $this->io->success('Error Station Local ' . $e->getMessage() . ' ' . $e->getCode());
         } catch (RemoteStationsNotFound $e) {
             $this->io->success('Error ' . $e->getMessage() . ' ' . $e->getCode());
         }
