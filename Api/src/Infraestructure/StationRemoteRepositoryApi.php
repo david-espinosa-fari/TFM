@@ -116,7 +116,7 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
             }
             $response = $response->getContent(false);
 
-            if (isset($response)) {
+            if (!empty($response)) {
                 return $this->convertPredictionsResponseToDomain($response);
             }
             throw new ApiConectionError('No predictions for this location', 404);
@@ -129,9 +129,9 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
         } catch (RedirectionExceptionInterface $e) {
             throw new ApiConectionError('Redirection Error ' . $e->getMessage(), $e->getCode());
         } catch (ServerExceptionInterface $e) {
-            throw new ApiConectionError('Remote server Error ' . $e->getMessage(), $e->getCode());
+            throw new ApiConectionError('Remote exception ' . $e->getMessage(), $e->getCode());
         } catch (RemoteStationsNotFound $e) {
-            throw new ApiConectionError('Remote server Error ' . $e->getMessage(), $e->getCode());
+            throw new ApiConectionError('Remote error ' . $e->getMessage(), $e->getCode());
         }
 
     }
@@ -169,6 +169,8 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
             }
             return $predictions;
         }
+
+        throw new RemoteStationsNotFound('Predictions not found ', 500);
     }
 
     public function findStationsByLocationCode($locationCode): array
@@ -196,9 +198,9 @@ final class StationRemoteRepositoryApi implements StationRemoteRepository
         } catch (RedirectionExceptionInterface $e) {
             throw new ApiConectionError('Redirection Error ' . $e->getMessage(), $e->getCode());
         } catch (ServerExceptionInterface $e) {
-            throw new ApiConectionError('Server Error ' . $e->getMessage(), $e->getCode());
+            throw new ApiConectionError('Remote Error ' . $e->getMessage(), $e->getCode());
         } catch (RemoteStationsNotFound $e) {
-            throw new ApiConectionError('Server Error ' . $e->getMessage(), $e->getCode());
+            throw new ApiConectionError('Remote Error ' . $e->getMessage(), $e->getCode());
         }
 
     }

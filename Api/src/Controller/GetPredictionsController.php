@@ -45,7 +45,7 @@ final class GetPredictionsController extends AbstractController
                 if ($_SERVER['ENV'] === 'env') {
                     throw new StationErrorException($exception->getMessage(), 404);
                 }
-                throw new StationErrorException('Error conecting to remote services', 500);
+                throw new StationErrorException($exception->getMessage(), $exception->getCode());
             }
 
 
