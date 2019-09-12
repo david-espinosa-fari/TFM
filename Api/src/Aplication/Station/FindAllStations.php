@@ -46,14 +46,6 @@ final class FindAllStations
 
     public function __invoke()
     {
-        $query = self::CACHE_KEY_VALUE;
-
-        $response = $this->cache->find($query);
-
-        if (!empty($response) && is_array($response)) {
-            return $this->convertArrayToStandardResponse($response);
-
-        }
         return $this->findWithOutCache(false);
     }
 
@@ -89,7 +81,6 @@ final class FindAllStations
 
     public function findWithOutCache($withoutCache = false):array
     {
-        //$query = self::CACHE_KEY_VALUE;
         $localStations = [];
         $remoteStations = [];
 
@@ -132,7 +123,6 @@ final class FindAllStations
                 }
             }
 
-            //$this->cache->insert($query, $allStationsCache, $_SERVER['TIME_TO_LIVE_CACHE']);
             return $allStations;
         }
 
