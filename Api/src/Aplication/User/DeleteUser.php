@@ -27,7 +27,7 @@ final class DeleteUser
 
     public function __invoke($uuidUser)
     {
-        $query = md5($uuidUser);
+        $query = $uuidUser;
         $this->repository->deleteUser($uuidUser);
 
         $this->cacheDataRepository->insert($query, [''], 0);

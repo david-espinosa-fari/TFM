@@ -52,7 +52,7 @@ final class CreateUserToken
         catch (SignatureInvalidException $e) {
             return false;
         }*/
-        return true;
+        return false;
     }
 
 
