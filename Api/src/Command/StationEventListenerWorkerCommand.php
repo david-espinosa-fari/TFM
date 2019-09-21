@@ -52,8 +52,15 @@ class StationEventListenerWorkerCommand extends Command
         $callback = static function ($msg) use ($cacheData) {
 
             $message = json_decode($msg->body, true);
+            //var_dump($message);//uncoment for debug
             $cacheData->insert($message['uuidStation'], $message);
             echo 'Update cache for ' . $message['uuidStation'];
+            if (isset($message['uuidUser']))
+            {
+                $cacheData->insert('findUserStations'.$message['uuidUser'], [''], 0);
+                echo 'Update cache for findUserStations';
+            }
+
         };
 
         $channel->basic_consume($queue_name, '', false, true, false, false, $callback);

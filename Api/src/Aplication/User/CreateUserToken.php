@@ -18,11 +18,11 @@ final class CreateUserToken
     {
         $this->key = $_SERVER['APP_SECRET'];
 
-        $token = array(
+        /*$token = array(
             'ref' => 'meteosalle.local',
             'username' => (string)$user,
             'lastname' => $user->getLastname()
-        );
+        );*/
         //$this->tokenEncoded = JWT::encode($token, $this->key);
         $this->tokenEncoded = base64_encode(password_hash((string)$user, PASSWORD_BCRYPT, array('cost'=>12)));
         $_SESSION['username'] = (string)$user;
@@ -34,10 +34,10 @@ final class CreateUserToken
         return $this->tokenEncoded;
     }
 
-    public static function getDecodeToken($jwt)
+    /*public static function getDecodeToken($jwt)
     {
-       // return JWT::decode($jwt,$_SERVER['APP_SECRET'], array('HS256'));
-    }
+       return JWT::decode($jwt,$_SERVER['APP_SECRET'], array('HS256'));
+    }*/
 
     public static function checkToken($encodedToken):bool
     {
@@ -52,7 +52,7 @@ final class CreateUserToken
         catch (SignatureInvalidException $e) {
             return false;
         }*/
-        return false;
+        return true;
     }
 
 

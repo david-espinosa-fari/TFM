@@ -24,5 +24,5 @@
 - Redis: 6379
 - RabbitMQ: 15672
 
-## Servicios expuesto 
+## Servicios expuestos
 - Nginx: 80
