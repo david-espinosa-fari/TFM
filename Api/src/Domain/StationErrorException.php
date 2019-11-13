@@ -8,7 +8,6 @@ use \Throwable;
 final class StationErrorException extends Exception
 {
     private $detailsError;
-
     /**
      * StationErrorException constructor.
      * @param string $message

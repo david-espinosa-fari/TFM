@@ -24,6 +24,7 @@ final class DeleteStationController extends AbstractController
      * @return JsonResponse
      * @throws RedisConectionErrorException
      */
+
     public function index($uuidStation, Request $request)
     {
 
